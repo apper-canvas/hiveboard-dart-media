@@ -26,6 +26,85 @@ export const communityService = {
       .slice(0, limit);
   },
 
+  async getRules(communityName) {
+    await delay(200);
+    // Mock community rules
+    return [
+      {
+        title: "Be respectful and civil",
+        description: "Treat all members with respect. Personal attacks, harassment, and hate speech are not tolerated."
+      },
+      {
+        title: "Stay on topic",
+        description: "Posts should be relevant to the community's theme and purpose."
+      },
+      {
+        title: "No spam or self-promotion",
+        description: "Avoid excessive self-promotion and spam. Follow the 9:1 rule for sharing your own content."
+      },
+      {
+        title: "Use proper formatting",
+        description: "Use clear titles and proper formatting. Mark NSFW content appropriately."
+      },
+      {
+        title: "No duplicate posts",
+        description: "Search before posting to avoid duplicates. Reposts within 30 days will be removed."
+      }
+    ];
+  },
+
+  async getModerators(communityName) {
+    await delay(200);
+    // Mock moderators list
+    return [
+      {
+        username: "alexmod",
+        role: "Head Moderator",
+        isActive: true
+      },
+      {
+        username: "sarahadmin",
+        role: "Moderator",
+        isActive: true
+      },
+      {
+        username: "mikejones",
+        role: "Moderator",
+        isActive: false
+      },
+      {
+        username: "techguru99",
+        role: "Community Manager",
+        isActive: true
+      }
+    ];
+  },
+
+  async getRelated(communityName) {
+    await delay(200);
+    // Return other communities, excluding the current one
+    const related = communities.filter(c => c.name.toLowerCase() !== communityName.toLowerCase());
+    return related.slice(0, 5).map(c => ({
+      name: c.name,
+      memberCount: c.memberCount
+    }));
+  },
+
+  async getStats(communityName) {
+    await delay(200);
+    const community = communities.find(c => c.name.toLowerCase() === communityName.toLowerCase());
+    if (!community) {
+      throw new Error("Community not found");
+    }
+    
+    return {
+      totalMembers: community.memberCount,
+      onlineUsers: Math.floor(community.memberCount * 0.03),
+      postsToday: Math.floor(Math.random() * 20) + 5,
+      weeklyGrowth: Math.round((Math.random() * 10 + 1) * 10) / 10
+    };
+  },
+
   async search(query) {
     await delay(200);
     const searchTerm = query.toLowerCase();

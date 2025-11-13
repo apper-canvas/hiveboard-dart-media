@@ -10,13 +10,14 @@ import { cn } from "@/utils/cn";
 
 const PostFeed = ({ communityName = null, className }) => {
   const [posts, setPosts] = useState([]);
+  const [postType, setPostType] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeFilter, setActiveFilter] = useState("hot");
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const loadPosts = useCallback(async (filter = "hot", reset = false) => {
+const loadPosts = useCallback(async (filter = "hot", type = "all", reset = false) => {
     try {
       if (reset) {
         setLoading(true);
@@ -28,9 +29,9 @@ const PostFeed = ({ communityName = null, className }) => {
 
       let newPosts;
       if (communityName) {
-        newPosts = await postService.getByCommunity(communityName, filter, limit, offset);
+        newPosts = await postService.getByCommunity(communityName, filter, limit, offset, type);
       } else {
-        newPosts = await postService.getAll(filter, limit, offset);
+        newPosts = await postService.getAll(filter, limit, offset, type);
       }
 
       if (reset) {
@@ -52,9 +53,9 @@ const PostFeed = ({ communityName = null, className }) => {
     }
   }, [posts.length, communityName]);
 
-  useEffect(() => {
-    loadPosts(activeFilter, true);
-  }, [activeFilter, communityName]);
+useEffect(() => {
+    loadPosts(activeFilter, postType, true);
+  }, [activeFilter, postType, communityName]);
 
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
@@ -101,12 +102,14 @@ const PostFeed = ({ communityName = null, className }) => {
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
+<div className={cn("space-y-4", className)}>
       {/* Filter Tabs */}
       <div className="flex items-center justify-between">
         <FilterTabs 
           activeFilter={activeFilter}
+          postType={postType}
           onFilterChange={handleFilterChange}
+          onTypeChange={setPostType}
         />
         
         {communityName && (

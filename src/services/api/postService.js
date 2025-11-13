@@ -5,37 +5,40 @@ let posts = [...postsData];
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const postService = {
-  async getAll(filter = "hot", limit = 10, offset = 0) {
+async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
     await delay(300);
     
-    let sortedPosts = [...posts];
+    let filteredPosts = [...posts];
     
-    switch (filter) {
-      case "hot":
-        sortedPosts.sort((a, b) => {
-          const aScore = a.upvotes - a.downvotes + (a.commentCount * 0.5);
-          const bScore = b.upvotes - b.downvotes + (b.commentCount * 0.5);
-          return bScore - aScore;
-        });
-        break;
-      case "new":
-        sortedPosts.sort((a, b) => b.timestamp - a.timestamp);
-        break;
-      case "top":
-        sortedPosts.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
-        break;
-      case "rising":
-        const now = Date.now();
-        sortedPosts = sortedPosts.filter(post => now - post.timestamp < 24 * 60 * 60 * 1000);
-        sortedPosts.sort((a, b) => {
-          const aRise = (a.upvotes - a.downvotes) / Math.max((now - a.timestamp) / (60 * 60 * 1000), 1);
-          const bRise = (b.upvotes - b.downvotes) / Math.max((now - b.timestamp) / (60 * 60 * 1000), 1);
-          return bRise - aRise;
-        });
-        break;
+    // Apply type filtering
+    if (postType !== "all") {
+      filteredPosts = filteredPosts.filter(post => {
+        switch (postType) {
+          case "images":
+            return post.type === "image" || post.content?.includes("imgur") || post.content?.includes(".jpg") || post.content?.includes(".png");
+          case "videos":
+            return post.type === "video" || post.content?.includes("youtube") || post.content?.includes(".mp4");
+          case "discussions":
+            return post.type === "text" || (!post.content?.includes("http") && post.content?.length > 100);
+          case "links":
+            return post.type === "link" || (post.content?.includes("http") && !post.content?.includes("imgur") && !post.content?.includes("youtube"));
+          default:
+            return true;
+        }
+      });
     }
     
-    return sortedPosts.slice(offset, offset + limit);
+    // Apply sorting
+    let sortedPosts = this.applySorting(filteredPosts, filter);
+    
+    // Separate pinned posts
+    const pinnedPosts = sortedPosts.filter(post => post.isPinned);
+    const regularPosts = sortedPosts.filter(post => !post.isPinned);
+    
+    // Combine with pinned posts first
+    const finalPosts = [...pinnedPosts, ...regularPosts];
+    
+    return finalPosts.slice(offset, offset + limit);
   },
 
   async getById(id) {
@@ -47,11 +50,45 @@ export const postService = {
     return { ...post };
   },
 
-  async getByCommunity(communityName, filter = "hot", limit = 10, offset = 0) {
+  async getByCommunity(communityName, filter = "hot", limit = 10, offset = 0, postType = "all") {
     await delay(300);
-    const communityPosts = posts.filter(p => p.communityName.toLowerCase() === communityName.toLowerCase());
+    let communityPosts = posts.filter(p => p.communityName.toLowerCase() === communityName.toLowerCase());
     
-    let sortedPosts = [...communityPosts];
+    // Apply type filtering
+    if (postType !== "all") {
+      communityPosts = communityPosts.filter(post => {
+        switch (postType) {
+          case "images":
+            return post.type === "image" || post.content?.includes("imgur") || post.content?.includes(".jpg") || post.content?.includes(".png");
+          case "videos":
+            return post.type === "video" || post.content?.includes("youtube") || post.content?.includes(".mp4");
+          case "discussions":
+            return post.type === "text" || (!post.content?.includes("http") && post.content?.length > 100);
+          case "links":
+            return post.type === "link" || (post.content?.includes("http") && !post.content?.includes("imgur") && !post.content?.includes("youtube"));
+          default:
+            return true;
+        }
+      });
+    }
+    
+    // Apply sorting
+    let sortedPosts = this.applySorting(communityPosts, filter);
+    
+    // Separate pinned posts
+    const pinnedPosts = sortedPosts.filter(post => post.isPinned);
+    const regularPosts = sortedPosts.filter(post => !post.isPinned);
+    
+    // Combine with pinned posts first
+    const finalPosts = [...pinnedPosts, ...regularPosts];
+    
+    return finalPosts.slice(offset, offset + limit);
+  },
+
+  applySorting(postsArray, filter) {
+    let sortedPosts = [...postsArray];
+    const now = Date.now();
+    const weekAgo = now - (7 * 24 * 60 * 60 * 1000);
     
     switch (filter) {
       case "hot":
@@ -64,11 +101,23 @@ export const postService = {
       case "new":
         sortedPosts.sort((a, b) => b.timestamp - a.timestamp);
         break;
-      case "top":
+      case "topAllTime":
         sortedPosts.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
         break;
+      case "topWeek":
+        sortedPosts = sortedPosts.filter(post => post.timestamp >= weekAgo);
+        sortedPosts.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
+        break;
+      case "controversial":
+        sortedPosts.sort((a, b) => {
+          const aRatio = a.upvotes / Math.max(a.downvotes, 1);
+          const bRatio = b.upvotes / Math.max(b.downvotes, 1);
+          const aControversy = Math.min(a.upvotes, a.downvotes);
+          const bControversy = Math.min(b.upvotes, b.downvotes);
+          return (bControversy - aControversy) || (Math.abs(1 - aRatio) - Math.abs(1 - bRatio));
+        });
+        break;
       case "rising":
-        const now = Date.now();
         sortedPosts = sortedPosts.filter(post => now - post.timestamp < 24 * 60 * 60 * 1000);
         sortedPosts.sort((a, b) => {
           const aRise = (a.upvotes - a.downvotes) / Math.max((now - a.timestamp) / (60 * 60 * 1000), 1);
@@ -78,9 +127,8 @@ export const postService = {
         break;
     }
     
-    return sortedPosts.slice(offset, offset + limit);
+    return sortedPosts;
   },
-
   async create(postData) {
     await delay(400);
     const newPost = {
