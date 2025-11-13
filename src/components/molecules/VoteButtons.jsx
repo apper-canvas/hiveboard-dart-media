@@ -38,8 +38,8 @@ const VoteButtons = ({
         onClick={() => handleVote("up")}
         disabled={isLoading}
         className={cn(
-          "vote-arrow p-1 rounded-md transition-all duration-150 hover:bg-orange-50 disabled:opacity-50",
-          userVote === "up" ? "text-primary bg-orange-50 active" : "text-gray-400 hover:text-primary"
+"vote-arrow p-1 rounded-md transition-all duration-150 hover:bg-indigo-50 disabled:opacity-50",
+          userVote === "up" ? "text-primary bg-indigo-50 active" : "text-gray-400 hover:text-primary"
         )}
       >
         <ApperIcon 

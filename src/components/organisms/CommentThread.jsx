@@ -77,7 +77,7 @@ const CommentThread = ({
                   <span>•</span>
                   <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="flex items-center gap-1 text-primary hover:text-orange-600 font-medium"
+className="flex items-center gap-1 text-primary hover:text-indigo-600 font-medium"
                   >
                     <ApperIcon 
                       name={isCollapsed ? "Plus" : "Minus"} 

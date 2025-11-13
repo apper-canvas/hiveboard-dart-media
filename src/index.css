@@ -74,12 +74,11 @@ body {
 /* Custom utilities */
 @layer utilities {
   .gradient-text {
-    background: linear-gradient(135deg, #FF4500, #FF6B35);
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
   .card-hover {
     transition: all 0.2s ease-out;
   }
@@ -106,14 +105,14 @@ body {
     transition: all 0.2s ease-in-out;
   }
 
-  .filter-tab.active::after {
+.filter-tab.active::after {
     content: '';
     position: absolute;
     bottom: -1px;
     left: 0;
     right: 0;
     height: 3px;
-    background: #FF4500;
+    background: #6366F1;
     border-radius: 2px 2px 0 0;
   }
 

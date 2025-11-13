@@ -31,7 +31,7 @@ const Header = ({ className }) => {
               onClick={handleLogoClick}
               className="flex items-center gap-2 group"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+<div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                 <ApperIcon name="Hexagon" className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-black gradient-text hidden sm:block">
@@ -65,7 +65,7 @@ const Header = ({ className }) => {
             {/* Mobile Create Post */}
             <button 
               onClick={handleCreatePost}
-              className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-orange-500 text-white hover:from-orange-600 hover:to-orange-700 transition-all"
+className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 transition-all"
             >
               <ApperIcon name="Plus" className="w-5 h-5" />
             </button>
