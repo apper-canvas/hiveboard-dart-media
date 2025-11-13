@@ -1,0 +1,65 @@
+[
+  {
+    "name": "technology",
+    "description": "Latest tech news, gadgets, and innovations",
+    "memberCount": 2847362,
+    "postCount": 156789,
+    "createdAt": 1577836800000
+  },
+  {
+    "name": "photography",
+    "description": "Share your photos and discuss techniques",
+    "memberCount": 1234567,
+    "postCount": 89456,
+    "createdAt": 1583020800000
+  },
+  {
+    "name": "health",
+    "description": "Health, wellness, and fitness discussions",
+    "memberCount": 891234,
+    "postCount": 45678,
+    "createdAt": 1588291200000
+  },
+  {
+    "name": "cooking",
+    "description": "Recipes, tips, and culinary adventures",
+    "memberCount": 567890,
+    "postCount": 34567,
+    "createdAt": 1591920000000
+  },
+  {
+    "name": "science",
+    "description": "Scientific discoveries and research",
+    "memberCount": 1456789,
+    "postCount": 67890,
+    "createdAt": 1594598400000
+  },
+  {
+    "name": "gaming",
+    "description": "Video games, reviews, and gaming culture",
+    "memberCount": 3456789,
+    "postCount": 234567,
+    "createdAt": 1597363200000
+  },
+  {
+    "name": "space",
+    "description": "Astronomy, space exploration, and the cosmos",
+    "memberCount": 987654,
+    "postCount": 56789,
+    "createdAt": 1600041600000
+  },
+  {
+    "name": "gardening",
+    "description": "Plants, gardens, and growing tips",
+    "memberCount": 345678,
+    "postCount": 23456,
+    "createdAt": 1602720000000
+  },
+  {
+    "name": "cryptocurrency",
+    "description": "Digital currencies and blockchain technology",
+    "memberCount": 2345678,
+    "postCount": 123456,
+    "createdAt": 1605312000000
+  }
+]

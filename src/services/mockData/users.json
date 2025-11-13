@@ -1,0 +1,62 @@
+[
+  {
+    "username": "tech_researcher",
+    "karma": 15647,
+    "joinedAt": 1609459200000,
+    "subscribedCommunities": ["technology", "science", "programming"]
+  },
+  {
+    "username": "mountain_explorer",
+    "karma": 8932,
+    "joinedAt": 1612137600000,
+    "subscribedCommunities": ["photography", "nature", "hiking"]
+  },
+  {
+    "username": "wellness_guru",
+    "karma": 5234,
+    "joinedAt": 1614556800000,
+    "subscribedCommunities": ["health", "meditation", "fitness"]
+  },
+  {
+    "username": "bread_master",
+    "karma": 7865,
+    "joinedAt": 1617235200000,
+    "subscribedCommunities": ["cooking", "baking", "food"]
+  },
+  {
+    "username": "climate_scientist",
+    "karma": 12456,
+    "joinedAt": 1619827200000,
+    "subscribedCommunities": ["science", "environment", "climate"]
+  },
+  {
+    "username": "pixel_artist",
+    "karma": 9876,
+    "joinedAt": 1622505600000,
+    "subscribedCommunities": ["gaming", "art", "gamedev"]
+  },
+  {
+    "username": "space_explorer",
+    "karma": 18234,
+    "joinedAt": 1625097600000,
+    "subscribedCommunities": ["space", "astronomy", "science"]
+  },
+  {
+    "username": "green_thumb",
+    "karma": 3456,
+    "joinedAt": 1627776000000,
+    "subscribedCommunities": ["gardening", "plants", "sustainability"]
+  },
+  {
+    "username": "crypto_analyst",
+    "karma": 11223,
+    "joinedAt": 1630454400000,
+    "subscribedCommunities": ["cryptocurrency", "finance", "technology"]
+  },
+  {
+    "username": "northern_lights",
+    "karma": 6789,
+    "joinedAt": 1633046400000,
+    "subscribedCommunities": ["photography", "nature", "travel"]
+  }
+]
