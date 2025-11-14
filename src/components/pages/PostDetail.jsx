@@ -53,6 +53,20 @@ const [loading, setLoading] = useState(true);
       toast.error("Failed to vote. Please try again.");
     }
   };
+const handleLike = async () => {
+    try {
+      const updatedPost = await postService.like(post.Id);
+      setPost(updatedPost);
+      
+      if (updatedPost.isLiked) {
+        toast.success("Post liked!");
+      } else {
+        toast.success("Like removed");
+      }
+    } catch (error) {
+      toast.error("Failed to like post. Please try again.");
+    }
+  };
 
   const handleRetry = () => {
     loadPost();
@@ -97,14 +111,23 @@ const [loading, setLoading] = useState(true);
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="flex gap-6 p-6">
           {/* Vote Buttons */}
-          <div className="flex-shrink-0">
-            <VoteButtons 
-              upvotes={post.upvotes}
-              downvotes={post.downvotes}
-              userVote={post.userVote}
-              onVote={handleVote}
-              size="lg"
-            />
+<div className="flex-shrink-0">
+            <div className="flex gap-4">
+              <VoteButtons 
+                upvotes={post.upvotes}
+                downvotes={post.downvotes}
+                userVote={post.userVote}
+                onVote={handleVote}
+                size="lg"
+              />
+              <VoteButtons 
+                mode="like"
+                likes={post.likes || 0}
+                isLiked={post.isLiked || false}
+                onLike={handleLike}
+                size="lg"
+              />
+            </div>
           </div>
 
           {/* Content */}
