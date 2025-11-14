@@ -41,7 +41,6 @@ const PostCard = ({ post, className, onPostUpdate }) => {
       return () => clearInterval(interval);
     }
   }, [currentPost.Id, currentPost.contentType, currentPost.pollActive]);
-
 const handleVote = async (voteType) => {
     try {
       const updatedPost = await postService.vote(currentPost.Id, voteType);
@@ -58,7 +57,6 @@ const handleVote = async (voteType) => {
       toast.error("Failed to vote. Please try again.");
     }
   };
-
   const handlePollVote = async (optionIndex) => {
     if (userVoted) {
       toast.error("You've already voted in this poll");
@@ -86,12 +84,12 @@ const handleVote = async (voteType) => {
     }
   };
 
-  const handleLike = async () => {
+const handleLike = async () => {
     try {
       const updatedPost = await postService.like(currentPost.Id);
       setCurrentPost(updatedPost);
       
-if (updatedPost.isLiked) {
+      if (updatedPost.isLiked) {
         toast.success("Post liked!");
       } else {
         toast.success("Like removed");
@@ -115,7 +113,6 @@ if (updatedPost.isLiked) {
       toast.error("Failed to update save status");
     }
   };
-  
 const handleHide = async () => {
     try {
       await postService.hidePost(currentPost.Id);
@@ -129,7 +126,6 @@ const handleHide = async () => {
       toast.error("Failed to hide post");
     }
   };
-
   const handlePostClick = (e) => {
     // Don't navigate if clicking on vote buttons or community links
     if (e.target.closest(".vote-buttons") || e.target.closest(".community-link")) {
@@ -137,7 +133,6 @@ const handleHide = async () => {
     }
     navigate(`/post/${currentPost.Id}`);
   };
-
 const getContentTypeIcon = () => {
     switch (currentPost.contentType) {
       case "image":
@@ -150,6 +145,7 @@ const getContentTypeIcon = () => {
         return "FileText";
     }
   };
+
   const handleAwardGiven = (award) => {
     const updatedAwards = awardService.getPostAwards(currentPost.Id);
     setPostAwards(updatedAwards);
@@ -160,14 +156,13 @@ const getContentTypeIcon = () => {
     return currentPost.pollOptions.reduce((sum, opt) => sum + (opt.votes || 0), 0);
   };
 
-  return (
+return (
     <div className={cn(
-      "bg-white rounded-xl shadow-sm border border-gray-100 card-hover cursor-pointer",
-      className
+      "bg-white rounded-xl shadow-sm border border-gray-100 card-hover cursor-pointer"
     )}>
-<div className="flex gap-4 p-4" onClick={handlePostClick}>
+      <div className="flex gap-4 p-4" onClick={handlePostClick}>
         {/* Vote Buttons */}
-        <div 
+        <div
           className="vote-buttons flex-shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
@@ -187,6 +182,7 @@ const getContentTypeIcon = () => {
           </div>
         </div>
 
+        {/* Content */}
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Metadata */}
@@ -213,9 +209,9 @@ const getContentTypeIcon = () => {
           {/* Title */}
           <h2 className="text-lg font-bold text-gray-900 mb-2 hover:text-primary transition-colors">
             {currentPost.title}
-          </h2>
+</h2>
 
-{/* Content Preview */}
+          {/* Content Preview */}
           {currentPost.content && (
             <p className="text-gray-700 mb-3 line-clamp-3">
               {currentPost.content.length > 200 
@@ -223,7 +219,6 @@ const getContentTypeIcon = () => {
                 : currentPost.content}
             </p>
           )}
-
         {/* Actions */}
         {currentPost.contentType === 'poll' ? (
           <div className="space-y-4">
@@ -310,13 +305,13 @@ const getContentTypeIcon = () => {
           </div>
         ) : (
           <>
-            {/* Awards Display */}
+{/* Awards Display */}
             {postAwards.length > 0 && (
               <div className="flex items-center gap-2 py-2 flex-wrap">
                 <AwardDisplay awards={postAwards} />
               </div>
             )}
-<div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex items-center gap-4 text-sm text-gray-600">
               <div className="flex items-center gap-1">
                 <ApperIcon name="MessageSquare" className="w-4 h-4" />
                 <span>{currentPost.commentCount} comments</span>
@@ -346,7 +341,7 @@ const getContentTypeIcon = () => {
                 className="flex items-center gap-1 hover:text-primary transition-colors"
               >
                 <ApperIcon name="EyeOff" className="w-4 h-4" />
-<span>Hide</span>
+                <span>Hide</span>
               </button>
               <button
                 onClick={() => setShowAwardModal(true)}
@@ -357,8 +352,9 @@ const getContentTypeIcon = () => {
                 <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
               </button>
             </div>
-</>
+            </>
         )}
+      </div>
       </div>
 
       {/* Thumbnail */}
@@ -375,7 +371,7 @@ const getContentTypeIcon = () => {
         </div>
       )}
 
-      {/* Award Modal */}
+{/* Award Modal */}
       <AwardModal
         isOpen={showAwardModal}
         onClose={() => setShowAwardModal(false)}
@@ -385,7 +381,6 @@ const getContentTypeIcon = () => {
       />
     </div>
   );
-};
 };
 
 export default PostCard;
