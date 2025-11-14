@@ -440,9 +440,9 @@ if (!user) {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex flex-col lg:flex-row lg:items-center gap-6">
               {/* Avatar and Basic Info */}
-              <div className="flex items-center gap-6">
+<div className="flex items-center gap-6">
                 <div className="relative">
-<div 
+                  <div 
                     className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-purple-600 border-4 border-white shadow-lg"
                     style={{
                       backgroundImage: user?.avatar ? `url(${user.avatar})` : undefined,
@@ -457,7 +457,6 @@ if (!user) {
                         </span>
                       </div>
                     )}
-)}
                   </div>
                   {user?.isOnline && (
                     <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-2 border-white rounded-full" />
@@ -630,8 +629,8 @@ if (!user) {
               <div className="flex items-center gap-2 mb-4">
                 <ApperIcon name="Users" className="w-5 h-5 text-primary" />
                 <h3 className="font-semibold text-gray-900">Active Communities</h3>
-              </div>
-<div className="space-y-3">
+</div>
+              <div className="space-y-3">
                 {communities?.slice(0, 5).map(community => (
                   <Link
                     key={community.Id}
@@ -655,6 +654,10 @@ if (!user) {
         </div>
       </div>
     </div>
+  );
+};
+
+export default UserProfile;
   );
 };
 
