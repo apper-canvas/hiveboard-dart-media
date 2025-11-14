@@ -7,7 +7,7 @@ import Empty from "@/components/ui/Empty";
 import { commentService } from "@/services/api/commentService";
 import { cn } from "@/utils/cn";
 
-const CommentSection = ({ postId, className }) => {
+const CommentSection = ({ postId, className, onCommentCountChange }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -25,16 +25,27 @@ const CommentSection = ({ postId, className }) => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     if (postId) {
       loadComments();
     }
   }, [postId]);
 
+  // Update parent with comment count whenever comments change
+  useEffect(() => {
+    if (onCommentCountChange) {
+      onCommentCountChange(comments.length);
+    }
+  }, [comments.length, onCommentCountChange]);
+
 const handleCommentAdded = (newComment) => {
     setComments(prev => {
       // Add the new comment/reply to the list
       const updated = [...prev, newComment];
+      // Update parent with new count
+      if (onCommentCountChange) {
+        onCommentCountChange(updated.length);
+      }
       return updated;
     });
   };

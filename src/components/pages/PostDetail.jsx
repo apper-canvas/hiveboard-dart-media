@@ -12,8 +12,9 @@ import { toast } from "react-toastify";
 const PostDetail = () => {
   const { postId } = useParams();
   const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [commentCount, setCommentCount] = useState(0);
 
   const loadPost = async () => {
     try {
@@ -157,8 +158,8 @@ const PostDetail = () => {
             {/* Actions */}
             <div className="flex items-center gap-6 text-sm text-gray-600 pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2">
-                <ApperIcon name="MessageSquare" className="w-4 h-4" />
-                <span className="font-medium">{post.commentCount} comments</span>
+<ApperIcon name="MessageSquare" className="w-4 h-4" />
+                <span className="font-medium">{commentCount} comments</span>
               </div>
               <button className="flex items-center gap-2 hover:text-primary transition-colors">
                 <ApperIcon name="Share" className="w-4 h-4" />
@@ -178,7 +179,7 @@ const PostDetail = () => {
       </div>
 
       {/* Comments Section */}
-      <CommentSection postId={postId} />
+<CommentSection postId={postId} onCommentCountChange={setCommentCount} />
     </div>
   );
 };
