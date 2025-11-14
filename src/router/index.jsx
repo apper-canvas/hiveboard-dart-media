@@ -33,8 +33,8 @@ const mainRoutes = [
       </Suspense>
     )
   },
-  {
-    path: "post/:id",
+{
+    path: "post/:postId",
     element: (
       <Suspense fallback={<LoadingSpinner />}>
         <PostDetail />
