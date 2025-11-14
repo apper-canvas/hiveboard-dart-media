@@ -32,9 +32,77 @@ const community = communities.find(c => c.name.toLowerCase() === name.toLowerCas
     await delay(300);
     return [...communities]
       .sort((a, b) => b.memberCount - a.memberCount)
-      .slice(0, limit);
+.slice(0, limit);
   },
 
+  async getTrending(limit = 5) {
+    await delay(350);
+    
+    // Enhanced trending algorithm considering multiple factors
+    const enrichedCommunities = communities.map(community => {
+      const now = Date.now();
+      const dayMs = 24 * 60 * 60 * 1000;
+      const ageInDays = Math.max(1, (now - community.createdAt) / dayMs);
+      
+      // Base activity metrics
+      const baseMemberCount = community.memberCount;
+      const basePostActivity = Math.floor(Math.random() * 50) + 5; // Posts today
+      const baseCommentActivity = Math.floor(Math.random() * 200) + 20; // Comments today
+      const baseVoteActivity = Math.floor(Math.random() * 1000) + 100; // Votes today
+      
+      // Calculate growth velocity (simulated)
+      const memberGrowthRate = Math.random() * 25 + 1; // 1-25% growth
+      const newMembersToday = Math.floor((baseMemberCount * memberGrowthRate) / 100);
+      
+      // Activity velocity
+      const postVelocity = basePostActivity / Math.max(1, ageInDays);
+      const commentVelocity = baseCommentActivity / Math.max(1, ageInDays);
+      const voteVelocity = baseVoteActivity / Math.max(1, ageInDays);
+      
+      // Engagement rate (comments per post, votes per post)
+      const engagementRate = (baseCommentActivity + baseVoteActivity) / Math.max(1, basePostActivity);
+      
+      // Time decay factor (newer activity weighted more heavily)
+      const timeDecay = Math.exp(-ageInDays / 30); // Decay over 30 days
+      
+      // Trending score algorithm
+      const trendingScore = (
+        (memberGrowthRate * 0.3) + // 30% weight on member growth
+        (postVelocity * 0.25) + // 25% weight on post velocity
+        (engagementRate * 0.25) + // 25% weight on engagement
+        (voteVelocity * 0.1) + // 10% weight on vote velocity
+        (commentVelocity * 0.1) // 10% weight on comment velocity
+      ) * timeDecay; // Apply time decay
+      
+      return {
+        ...community,
+        trendingScore,
+        growthPercentage: memberGrowthRate,
+        newMembersToday,
+        todayActivity: Math.floor(baseMemberCount * (0.01 + Math.random() * 0.05)), // 1-6% active
+        postActivity: basePostActivity,
+        commentActivity: baseCommentActivity,
+        voteActivity: baseVoteActivity,
+        engagementRate: Math.round(engagementRate * 10) / 10
+      };
+    });
+    
+    // Sort by trending score and return top results
+    return enrichedCommunities
+      .sort((a, b) => b.trendingScore - a.trendingScore)
+      .slice(0, limit)
+      .map(community => ({
+        Id: community.Id,
+        name: community.name,
+        description: community.description,
+        memberCount: community.memberCount,
+        growthPercentage: community.growthPercentage,
+        newMembersToday: community.newMembersToday,
+        todayActivity: community.todayActivity,
+        trendingScore: community.trendingScore,
+        engagementRate: community.engagementRate
+      }));
+  },
   async getRules(communityName) {
     await delay(200);
     // Mock community rules

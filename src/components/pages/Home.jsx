@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PostFeed from "@/components/organisms/PostFeed";
 import Sidebar from "@/components/organisms/Sidebar";
+import TrendingWidget from "@/components/organisms/TrendingWidget";
 
 const Home = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -23,7 +24,12 @@ const Home = () => {
           </h1>
           <p className="text-lg text-gray-600">
             Discover trending content, join discussions, and connect with communities that share your interests.
-          </p>
+</p>
+        </div>
+        
+        {/* Trending Communities Widget */}
+        <div className="mb-6">
+          <TrendingWidget />
         </div>
         
         <PostFeed />

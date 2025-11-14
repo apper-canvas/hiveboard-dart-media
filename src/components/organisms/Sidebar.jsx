@@ -5,7 +5,7 @@ import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Community from "@/components/pages/Community";
-
+import TrendingWidget from "@/components/organisms/TrendingWidget";
 const Sidebar = ({ communityName = null, className }) => {
   const [communities, setCommunities] = useState([]);
   const [community, setCommunity] = useState(null);
@@ -241,12 +241,15 @@ if (communityName) {
                     </div>
                   </div>
                 </Link>
-              ))}
+))}
             </div>
           )}
         </div>
 
-        {/* Quick Actions */}
+        {/* Trending Today */}
+        <TrendingWidget showTitle={true} maxItems={5} compact={true} />
+
+        {/* Additional Sidebar Content */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <ApperIcon name="Zap" className="w-5 h-5 text-accent" />
