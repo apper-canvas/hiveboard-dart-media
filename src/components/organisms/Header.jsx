@@ -104,7 +104,15 @@ className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-indigo-600 
                     onClick={() => setIsUserMenuOpen(false)}
                   >
                     <ApperIcon name="Settings" className="w-4 h-4" />
-                    Settings
+Settings
+                  </Link>
+                  <Link 
+                    to="/create-community"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <ApperIcon name="Users" className="w-4 h-4" />
+                    Create Community
                   </Link>
                   <div className="border-t border-gray-100 mt-1">
                     <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">

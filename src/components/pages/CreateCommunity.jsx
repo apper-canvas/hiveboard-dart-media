@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { communityService } from "@/services/api/communityService";
+import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
+import FormField from "@/components/molecules/FormField";
+import Community from "@/components/pages/Community";
+import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import Textarea from "@/components/atoms/Textarea";
-import Select from "@/components/atoms/Select";
-import FormField from "@/components/molecules/FormField";
-import { cn } from "@/utils/cn";
+
 
 const CreateCommunity = () => {
   const navigate = useNavigate();
