@@ -396,13 +396,13 @@ const buildMessageThreads = (messages) => {
                               )}>
                                 {conversation.lastMessage.content}
                               </p>
-                              <p className="text-xs text-gray-400 mt-1">
+<p className="text-xs text-gray-400 mt-1">
                                 {formatDistanceToNow(new Date(conversation.lastMessage.timestamp), { addSuffix: true })}
                               </p>
                             </>
                           )}
                         </div>
-</div>
+                      </div>
                     </div>
                   );
                 })}
@@ -431,11 +431,11 @@ const buildMessageThreads = (messages) => {
                     </div>
                     <div>
                       <h2 className="font-medium text-gray-900">
+<h2 className="font-medium text-gray-900">
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
                       </h2>
-<p className="text-sm text-gray-500">Active now</p>
+                      <p className="text-sm text-gray-500">Active now</p>
                     </div>
-                  </div>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
@@ -562,11 +562,11 @@ const buildMessageThreads = (messages) => {
                                     onClick={() => {
                                       setShowReplyForm(null);
                                       setReplyMessage('');
-                                    }}
+}}
                                     variant="ghost"
                                     size="sm"
                                   >
-Cancel
+                                    Cancel
                                   </Button>
                                 </div>
                               </div>
@@ -592,12 +592,12 @@ Cancel
                                       ? "bg-primary text-white rounded-br-sm" 
                                       : "bg-gray-100 text-gray-900 rounded-bl-sm"
                                   )}>
-                                    <div 
+<div 
                                       className="text-sm markdown-content"
                                       dangerouslySetInnerHTML={renderMarkdown(reply.content)}
                                     />
                                   </div>
-<div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-2">
                                     <p className="text-xs text-gray-400">
                                       {formatDistanceToNow(new Date(reply.timestamp), { addSuffix: true })}
                                     </p>
@@ -617,15 +617,15 @@ Cancel
 
               {/* Message Input */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
-                <div className="flex gap-3">
-                  <div className="flex-1">
+<div className="flex-1">
                     <Textarea
                       placeholder="Type a message... (Markdown supported)"
                       value={newMessage}
-onChange={(e) => setNewMessage(e.target.value)}
+                      onChange={(e) => setNewMessage(e.target.value)}
                       disabled={sending}
                       className="min-h-[60px] resize-none"
                       onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
                         if (e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault();
                           handleSendMessage(e);
@@ -659,13 +659,12 @@ onChange={(e) => setNewMessage(e.target.value)}
         {/* Compose Modal */}
         {showCompose && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+<div className="bg-white rounded-lg p-6 max-w-md w-full">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900">New Message</h3>
                 <button
                   onClick={() => setShowCompose(false)}
                   className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
                 </button>
@@ -695,7 +694,7 @@ className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
                     rows={4}
                   />
                 </div>
-              <div className="flex gap-3">
+<div className="flex gap-3">
                 <Button
                   type="button"
                   variant="secondary"
@@ -703,7 +702,7 @@ className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
                   onClick={() => setShowCompose(false)}
                   className="flex-1"
                 >
-Cancel
+                  Cancel
                 </Button>
                 <Button
                   type="submit"
@@ -747,16 +746,16 @@ Cancel
                 </Button>
                 <Button
                   variant="danger"
+<Button
+                  variant="danger"
                   onClick={() => handleBlockUser(showBlockConfirm.Id)}
                 >
                   Block User
                 </Button>
               </div>
-</div>
+            </div>
           </div>
         )}
-
-        {/* Report Spam Modal */}
         {showReportModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
