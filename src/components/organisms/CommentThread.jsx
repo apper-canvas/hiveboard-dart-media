@@ -14,9 +14,9 @@ const CommentThread = ({
   depth = 0 
 }) => {
 const [currentComment, setCurrentComment] = useState(comment);
-  const [showReplyForm, setShowReplyForm] = useState(false);
+const [showReplyForm, setShowReplyForm] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-
+  const [isSaved, setIsSaved] = useState(commentService.isCommentSaved(comment.Id));
   // Calculate total reply count recursively
   const getTotalReplyCount = (comment) => {
     if (!comment.children || comment.children.length === 0) return 0;
@@ -61,6 +61,22 @@ const handleVote = async (voteType) => {
       }
     } catch (error) {
       toast.error("Failed to like comment. Please try again.");
+    }
+};
+  
+  const handleSave = async () => {
+    try {
+      if (isSaved) {
+        await commentService.unsaveComment(comment.Id);
+        setIsSaved(false);
+        toast.success("Comment removed from saved");
+      } else {
+        await commentService.saveComment(comment.Id);
+        setIsSaved(true);
+        toast.success("Comment saved successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to update save status");
     }
   };
 
@@ -157,6 +173,13 @@ className="flex items-center gap-1 text-primary hover:text-indigo-600 font-mediu
                       Reply
                     </button>
                   )}
+<button 
+                    onClick={handleSave}
+                    className={`flex items-center gap-1 text-sm font-medium transition-colors ${isSaved ? 'text-primary' : 'text-gray-600 hover:text-primary'}`}
+                  >
+                    <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
+                    {isSaved ? "Saved" : "Save"}
+                  </button>
                   <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-primary font-medium">
                     <ApperIcon name="Share" className="w-4 h-4" />
                     Share

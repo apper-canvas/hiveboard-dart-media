@@ -135,10 +135,9 @@ const handleCommentAdded = (newComment) => {
               onCommentVoted={handleCommentVoted}
             />
           ))}
-        </div>
+</div>
       )}
     </div>
   );
 };
-
 export default CommentSection;

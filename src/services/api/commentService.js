@@ -1,6 +1,7 @@
 import commentsData from "@/services/mockData/comments.json";
 
 let comments = [...commentsData];
+let savedComments = JSON.parse(localStorage.getItem('savedComments') || '[]');
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -131,5 +132,34 @@ async vote(id, voteType) {
     
     comments.splice(commentIndex, 1);
     return true;
+},
+  
+  // Save/Unsave functionality for comments
+  async saveComment(commentId) {
+    await delay(200);
+    if (!savedComments.includes(commentId)) {
+      savedComments.push(commentId);
+      localStorage.setItem('savedComments', JSON.stringify(savedComments));
+    }
+    return true;
+  },
+  
+  async unsaveComment(commentId) {
+    await delay(200);
+    savedComments = savedComments.filter(id => id !== commentId);
+    localStorage.setItem('savedComments', JSON.stringify(savedComments));
+    return true;
+  },
+  
+  // Get saved comments
+  async getSavedComments() {
+    await delay(300);
+    const savedCommentIds = JSON.parse(localStorage.getItem('savedComments') || '[]');
+    return comments.filter(comment => savedCommentIds.includes(comment.Id));
+  },
+  
+  // Check if comment is saved
+  isCommentSaved(commentId) {
+    return savedComments.includes(commentId);
   }
 };

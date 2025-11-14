@@ -90,13 +90,29 @@ className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-indigo-600 
                     <div className="text-sm font-semibold text-gray-900">current_user</div>
                     <div className="text-xs text-gray-500">1,337 karma</div>
                   </div>
-                  <Link 
+<Link 
                     to="/profile"
                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     onClick={() => setIsUserMenuOpen(false)}
                   >
                     <ApperIcon name="User" className="w-4 h-4" />
                     Profile
+                  </Link>
+                  <Link 
+                    to="/saved"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <ApperIcon name="Bookmark" className="w-4 h-4" />
+                    Saved
+                  </Link>
+                  <Link 
+                    to="/hidden"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <ApperIcon name="EyeOff" className="w-4 h-4" />
+                    Hidden
                   </Link>
                   <Link 
                     to="/settings"

@@ -1,14 +1,16 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import ApperIcon from "@/components/ApperIcon";
-import VoteButtons from "@/components/molecules/VoteButtons";
 import { postService } from "@/services/api/postService";
 import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+import VoteButtons from "@/components/molecules/VoteButtons";
 
-const PostCard = ({ post, className }) => {
-  const [currentPost, setCurrentPost] = useState(post);
+const PostCard = ({ post, className, onPostUpdate }) => {
+const [currentPost, setCurrentPost] = useState(post);
+  const [isSaved, setIsSaved] = useState(postService.isPostSaved(post.Id));
+  const [isHidden, setIsHidden] = useState(false);
   const navigate = useNavigate();
 
 const handleVote = async (voteType) => {
@@ -40,6 +42,36 @@ const handleVote = async (voteType) => {
       }
     } catch (error) {
       toast.error("Failed to like post. Please try again.");
+    }
+};
+  
+  const handleSave = async () => {
+    try {
+      if (isSaved) {
+        await postService.unsavePost(currentPost.Id);
+        setIsSaved(false);
+        toast.success("Post removed from saved");
+      } else {
+        await postService.savePost(currentPost.Id);
+        setIsSaved(true);
+        toast.success("Post saved successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to update save status");
+    }
+  };
+  
+  const handleHide = async () => {
+    try {
+      await postService.hidePost(currentPost.Id);
+      setIsHidden(true);
+toast.success("Post hidden from feed");
+      // Trigger parent to refresh feed if needed
+      if (onPostUpdate) {
+        onPostUpdate();
+      }
+    } catch (error) {
+      toast.error("Failed to hide post");
     }
   };
 
@@ -133,10 +165,20 @@ const handleVote = async (voteType) => {
             <button className="flex items-center gap-1 hover:text-primary transition-colors">
               <ApperIcon name="Share" className="w-4 h-4" />
               <span>Share</span>
+</button>
+            <button 
+              onClick={handleSave}
+              className={`flex items-center gap-1 transition-colors ${isSaved ? 'text-primary' : 'hover:text-primary'}`}
+            >
+              <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
+              <span>{isSaved ? "Saved" : "Save"}</span>
             </button>
-            <button className="flex items-center gap-1 hover:text-primary transition-colors">
-              <ApperIcon name="Bookmark" className="w-4 h-4" />
-              <span>Save</span>
+            <button 
+              onClick={handleHide}
+              className="flex items-center gap-1 hover:text-primary transition-colors"
+            >
+              <ApperIcon name="EyeOff" className="w-4 h-4" />
+              <span>Hide</span>
             </button>
           </div>
         </div>

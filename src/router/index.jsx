@@ -1,11 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import Layout from "@/components/organisms/Layout";
 
 const Home = lazy(() => import("@/components/pages/Home"));
 const PostDetail = lazy(() => import("@/components/pages/PostDetail"));
 const Community = lazy(() => import("@/components/pages/Community"));
 const CreateCommunity = lazy(() => import("@/components/pages/CreateCommunity"));
+const Saved = lazy(() => import("@/components/pages/Saved"));
+const Hidden = lazy(() => import("@/components/pages/Hidden"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -35,8 +37,8 @@ const mainRoutes = [
         <PostDetail />
       </Suspense>
     )
-  },
-{
+},
+  {
     path: "r/:communityName",
     element: (
       <Suspense fallback={<LoadingFallback />}>
@@ -66,7 +68,25 @@ const routes = [
   {
     path: "/",
     element: <Layout />,
-    children: [...mainRoutes]
+    children: [
+      ...mainRoutes,
+      {
+        path: "saved",
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Saved />
+          </Suspense>
+        )
+      },
+      {
+        path: "hidden", 
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Hidden />
+          </Suspense>
+        )
+      }
+    ]
   }
 ];
 

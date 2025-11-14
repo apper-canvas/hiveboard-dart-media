@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import ApperIcon from "@/components/ApperIcon";
-import VoteButtons from "@/components/molecules/VoteButtons";
-import CommentSection from "@/components/organisms/CommentSection";
-import Loading from "@/components/ui/Loading";
-import ErrorView from "@/components/ui/ErrorView";
 import { postService } from "@/services/api/postService";
 import { toast } from "react-toastify";
-
+import ApperIcon from "@/components/ApperIcon";
+import VoteButtons from "@/components/molecules/VoteButtons";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import CommentSection from "@/components/organisms/CommentSection";
 const PostDetail = () => {
-  const { postId } = useParams();
+const { postId } = useParams();
   const [post, setPost] = useState(null);
 const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [commentCount, setCommentCount] = useState(0);
-
+  const [isSaved, setIsSaved] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
   const loadPost = async () => {
     try {
       setLoading(true);
@@ -29,11 +29,19 @@ const [loading, setLoading] = useState(true);
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     if (postId) {
       loadPost();
     }
   }, [postId]);
+
+  useEffect(() => {
+    // Check if post is saved or hidden after post is loaded
+    if (post) {
+      setIsSaved(postService.isPostSaved(parseInt(postId)));
+      setIsHidden(postService.isPostHidden(parseInt(postId)));
+    }
+  }, [post, postId]);
 
   const handleVote = async (voteType) => {
     if (!post) return;
@@ -67,7 +75,31 @@ const handleLike = async () => {
       toast.error("Failed to like post. Please try again.");
     }
   };
-
+const handleSave = async () => {
+    try {
+      if (isSaved) {
+        await postService.unsavePost(post.Id);
+        setIsSaved(false);
+        toast.success("Post removed from saved");
+      } else {
+        await postService.savePost(post.Id);
+        setIsSaved(true);
+        toast.success("Post saved successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to update save status");
+    }
+  };
+  
+  const handleHide = async () => {
+    try {
+      await postService.hidePost(post.Id);
+      setIsHidden(true);
+      toast.success("Post hidden from feed");
+    } catch (error) {
+      toast.error("Failed to hide post");
+    }
+  };
   const handleRetry = () => {
     loadPost();
   };
@@ -188,9 +220,19 @@ const handleLike = async () => {
                 <ApperIcon name="Share" className="w-4 h-4" />
                 <span>Share</span>
               </button>
-              <button className="flex items-center gap-2 hover:text-primary transition-colors">
-                <ApperIcon name="Bookmark" className="w-4 h-4" />
-                <span>Save</span>
+<button 
+                onClick={handleSave}
+                className={`flex items-center gap-2 hover:text-primary transition-colors ${isSaved ? 'text-primary' : ''}`}
+              >
+                <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
+                <span>{isSaved ? "Saved" : "Save"}</span>
+              </button>
+              <button 
+                onClick={handleHide}
+                className="flex items-center gap-2 hover:text-primary transition-colors"
+              >
+                <ApperIcon name="EyeOff" className="w-4 h-4" />
+                <span>Hide</span>
               </button>
               <button className="flex items-center gap-2 hover:text-primary transition-colors">
                 <ApperIcon name="Flag" className="w-4 h-4" />

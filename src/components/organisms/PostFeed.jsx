@@ -27,7 +27,7 @@ const loadPosts = useCallback(async (filter = "hot", type = "all", reset = false
       const offset = reset ? 0 : posts.length;
       const limit = 10;
 
-      let newPosts;
+let newPosts;
       if (communityName) {
         newPosts = await postService.getByCommunity(communityName, filter, limit, offset, type);
       } else {

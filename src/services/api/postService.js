@@ -1,6 +1,8 @@
 import postsData from "@/services/mockData/posts.json";
 
 let posts = [...postsData];
+let savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
+let hiddenPosts = JSON.parse(localStorage.getItem('hiddenPosts') || '[]');
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -9,6 +11,9 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
     await delay(300);
     
     let filteredPosts = [...posts];
+    
+    // Filter out hidden posts
+    filteredPosts = filteredPosts.filter(post => !hiddenPosts.includes(post.Id));
     
     // Apply type filtering
     if (postType !== "all") {
@@ -50,9 +55,12 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
     return { ...post };
   },
 
-  async getByCommunity(communityName, filter = "hot", limit = 10, offset = 0, postType = "all") {
+async getByCommunity(communityName, filter = "hot", limit = 10, offset = 0, postType = "all") {
     await delay(300);
     let communityPosts = posts.filter(p => p.communityName.toLowerCase() === communityName.toLowerCase());
+    
+    // Filter out hidden posts
+    communityPosts = communityPosts.filter(post => !hiddenPosts.includes(post.Id));
     
     // Apply type filtering
     if (postType !== "all") {
@@ -231,5 +239,63 @@ async vote(id, voteType) {
     
     posts.splice(postIndex, 1);
     return true;
+},
+  
+  // Save/Unsave functionality
+  async savePost(postId) {
+    await delay(200);
+    if (!savedPosts.includes(postId)) {
+      savedPosts.push(postId);
+      localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
+    }
+    return true;
+  },
+  
+  async unsavePost(postId) {
+    await delay(200);
+    savedPosts = savedPosts.filter(id => id !== postId);
+    localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
+    return true;
+  },
+  
+  // Hide/Unhide functionality
+  async hidePost(postId) {
+    await delay(200);
+    if (!hiddenPosts.includes(postId)) {
+      hiddenPosts.push(postId);
+      localStorage.setItem('hiddenPosts', JSON.stringify(hiddenPosts));
+    }
+    return true;
+  },
+  
+  async unhidePost(postId) {
+    await delay(200);
+    hiddenPosts = hiddenPosts.filter(id => id !== postId);
+    localStorage.setItem('hiddenPosts', JSON.stringify(hiddenPosts));
+    return true;
+  },
+  
+  // Get saved posts
+  async getSavedPosts() {
+    await delay(300);
+    const savedPostIds = JSON.parse(localStorage.getItem('savedPosts') || '[]');
+    return posts.filter(post => savedPostIds.includes(post.Id));
+  },
+  
+  // Get hidden posts
+  async getHiddenPosts() {
+    await delay(300);
+    const hiddenPostIds = JSON.parse(localStorage.getItem('hiddenPosts') || '[]');
+    return posts.filter(post => hiddenPostIds.includes(post.Id));
+  },
+  
+  // Check if post is saved
+  isPostSaved(postId) {
+    return savedPosts.includes(postId);
+  },
+  
+  // Check if post is hidden
+  isPostHidden(postId) {
+    return hiddenPosts.includes(postId);
   }
 };
