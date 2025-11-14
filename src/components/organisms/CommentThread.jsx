@@ -35,7 +35,14 @@ const CommentThread = ({
     }
   };
 
-  const handleReplyAdded = (newReply) => {
+const handleReplyAdded = (newReply) => {
+    // Update local state to include the new reply
+    setCurrentComment(prev => ({
+      ...prev,
+      children: [...(prev.children || []), newReply]
+    }));
+    
+    // Notify parent component
     onCommentAdded(newReply);
     setShowReplyForm(false);
   };
