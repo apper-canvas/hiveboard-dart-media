@@ -422,17 +422,17 @@ const buildMessageThreads = (messages) => {
             </div>
           ) : (
             <>
+<>
               {/* Messages Header */}
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
-{selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
+                      {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <h2 className="font-medium text-gray-900">
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
-                      </h2>
                       <p className="text-sm text-gray-500">Active now</p>
                     </div>
                   </div>
@@ -551,13 +551,13 @@ const buildMessageThreads = (messages) => {
                                     className="flex-1"
                                   />
                                   <Button
-                                    onClick={() => handleSendReply(thread.Id)}
+onClick={() => handleSendReply(thread.Id)}
                                     disabled={!replyMessage.trim() || sending}
                                     variant="primary"
                                     size="sm"
                                   >
                                     Send
-</Button>
+                                  </Button>
                                   <Button
                                     onClick={() => {
                                       setShowReplyForm(null);
@@ -573,7 +573,7 @@ const buildMessageThreads = (messages) => {
                             )}
                           </div>
                         </div>
-                        {/* Thread Replies */}
+{/* Thread Replies */}
                         {thread.replies && thread.replies.length > 0 && (
                           <div className="ml-8 space-y-3">
                             {thread.replies.map((reply) => (
@@ -581,7 +581,7 @@ const buildMessageThreads = (messages) => {
                                 "flex gap-3 max-w-[80%] group",
                                 reply.senderId === 1 ? "ml-auto flex-row-reverse" : ""
                               )}>
-<div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                                   {reply.senderId === 1 ? 'J' : selectedConversation.participants.find(p => p.Id === reply.senderId)?.username.charAt(0).toUpperCase()}
                                 </div>
                                 
@@ -609,9 +609,10 @@ const buildMessageThreads = (messages) => {
                               </div>
                             ))}
                           </div>
+                        )}
                       </div>
                     ))}
-</div>
+                  </div>
                 )}
               </div>
               
@@ -651,11 +652,14 @@ const buildMessageThreads = (messages) => {
                 </div>
               </form>
             </>
-          )}
+)}
         </div>
 
         {/* Compose Modal */}
         {showCompose && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-4 border-b">
                 <h3 className="text-lg font-bold text-gray-900">New Message</h3>
                 <button
                   onClick={() => setShowCompose(false)}
@@ -664,7 +668,7 @@ const buildMessageThreads = (messages) => {
                   <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
-              <form onSubmit={handleStartConversation} className="space-y-4">
+              <form onSubmit={handleStartConversation} className="space-y-4 p-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     To:
@@ -685,7 +689,7 @@ const buildMessageThreads = (messages) => {
                     placeholder="Type your message..."
                     value={composeForm.message}
                     onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
-disabled={sending}
+                    disabled={sending}
                     rows={4}
                   />
                 </div>
@@ -725,7 +729,7 @@ disabled={sending}
 
         {/* Block User Confirmation Modal */}
         {showBlockConfirm && (
-<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Block User</h3>
               <p className="text-gray-600 mb-6">
@@ -733,7 +737,7 @@ disabled={sending}
                 You won't receive messages from them and they won't appear in your conversation list.
               </p>
               <div className="flex gap-3 justify-end">
-                <Button>
+                <Button
                   variant="outline"
                   onClick={() => setShowBlockConfirm(null)}
                 >
