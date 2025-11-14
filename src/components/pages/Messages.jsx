@@ -405,12 +405,11 @@ const buildMessageThreads = (messages) => {
                       </div>
                     </div>
                   );
-                })}
+})}
               </div>
             )}
           </div>
         </div>
-</div>
 
         {/* Messages Area */}
         <div className="flex-1 flex flex-col">
@@ -437,14 +436,14 @@ const buildMessageThreads = (messages) => {
                       <p className="text-sm text-gray-500">Active now</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+<div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
                       className="p-2 hover:bg-gray-100"
                     >
                       <ApperIcon name="Mail" size={18} />
                     </Button>
-<div className="relative">
+                    <div className="relative">
                       <Button
                         variant="ghost"
                         onClick={() => setShowActionMenu(showActionMenu ? null : selectedConversation.Id)}
@@ -567,12 +566,12 @@ const buildMessageThreads = (messages) => {
                                     variant="ghost"
                                     size="sm"
                                   >
-                                    Cancel
+Cancel
                                   </Button>
                                 </div>
                               </div>
                             )}
-</div>
+                          </div>
                         </div>
                         {/* Thread Replies */}
                         {thread.replies && thread.replies.length > 0 && (
@@ -606,14 +605,15 @@ const buildMessageThreads = (messages) => {
                                       <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                                     )}
                                   </div>
-                                </div>
+</div>
                               </div>
                             ))}
                           </div>
                         )}
+                      </div>
                     ))}
                   </div>
-                </div>
+                )}
 
               {/* Message Input */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
@@ -629,8 +629,7 @@ const buildMessageThreads = (messages) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault();
                           handleSendMessage(e);
-                        }
-                      }}
+}}
                     />
                   </div>
                   <Button
@@ -638,19 +637,25 @@ const buildMessageThreads = (messages) => {
                     disabled={!newMessage.trim() || sending}
                     variant="primary"
                   >
-) : (
+                    {sending ? (
+                      <>
+                        <ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
+                        Sending...
+                      </>
+                    ) : (
                       <ApperIcon name="Send" className="w-4 h-4" />
                     )}
                   </Button>
                 </div>
                 <div className="text-xs text-gray-500 mt-2">
                   <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
-                </div>
+</div>
               </form>
             </>
           )}
         </div>
-{/* Compose Modal */}
+
+        {/* Compose Modal */}
         {showCompose && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
@@ -662,37 +667,33 @@ const buildMessageThreads = (messages) => {
                 >
                   <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
                 </button>
-              </div>
-
-              <form onSubmit={handleStartConversation} className="space-y-4">
-            <form onSubmit={handleStartConversation} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  To:
-                </label>
-                <Input
-                  placeholder="Username"
-                  value={composeForm.recipient}
-                  onChange={(e) => setComposeForm(prev => ({ ...prev, recipient: e.target.value }))}
-                  disabled={sending}
-                  required
-                />
-              </div>
-
-              <div>
+<form onSubmit={handleStartConversation} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    To:
+                  </label>
+                  <Input
+                    placeholder="Username"
+                    value={composeForm.recipient}
+                    onChange={(e) => setComposeForm(prev => ({ ...prev, recipient: e.target.value }))}
+                    disabled={sending}
+                    required
+                  />
+                </div>
+<div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Message:
                 </label>
-                <Textarea
                   placeholder="Type your message..."
                   value={composeForm.message}
                   onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
-disabled={sending}
+                  disabled={sending}
                   rows={4}
                 />
               </div>
 
               <div className="flex gap-3">
+                <Button
                   type="button"
                   variant="secondary"
                   disabled={sending}
@@ -702,14 +703,13 @@ disabled={sending}
                   Cancel
                 </Button>
                 <Button
-                  type="submit"
                   variant="primary"
                   disabled={!composeForm.recipient.trim() || sending}
                   className="flex-1"
                 >
                   {sending ? (
                     <>
-                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
+<ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
                       Sending...
                     </>
                   ) : (
@@ -717,20 +717,15 @@ disabled={sending}
                       <ApperIcon name="Send" className="w-4 h-4 mr-2" />
                       Send
                     </>
-</>
                   )}
-                </Button>
+</Button>
               </div>
-            </form>
-</div>
             </form>
             </div>
           </div>
         )}
-
-        {/* Block User Confirmation Modal */}
-        {/* Block User Confirmation Modal */}
-{showBlockConfirm && (
+{/* Block User Confirmation Modal */}
+        {showBlockConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Block User</h3>
@@ -759,7 +754,18 @@ disabled={sending}
         {showReportModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Report Message</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Report Message</h3>
+                <button
+                  onClick={() => {
+                    setShowReportModal(null);
+                    setReportReason('');
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Why are you reporting this message?
