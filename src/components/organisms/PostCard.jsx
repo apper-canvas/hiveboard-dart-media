@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
 import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
@@ -134,10 +134,12 @@ toast.success("Post hidden from feed");
             </Link>
             <span>•</span>
             <span>u/{currentPost.authorUsername}</span>
-            <span>•</span>
-            <span>{formatDistanceToNow(new Date(currentPost.timestamp))} ago</span>
+<span>•</span>
+            <span>{currentPost?.timestamp && isValid(new Date(currentPost.timestamp)) 
+              ? `${formatDistanceToNow(new Date(currentPost.timestamp))} ago`
+              : 'Date unavailable'}</span>
             <ApperIcon 
-              name={getContentTypeIcon()} 
+              name="MoreHorizontal"
               className="w-4 h-4 text-gray-400 ml-auto" 
             />
           </div>

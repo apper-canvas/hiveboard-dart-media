@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isValid } from "date-fns";
 import { toast } from "react-toastify";
 import { communityService } from "@/services/api/communityService";
 import ApperIcon from "@/components/ApperIcon";
@@ -136,8 +136,10 @@ const communityData = await communityService.getById(communityName);
                     </div>
                     <div className="flex items-center gap-1">
                       <ApperIcon name="Calendar" className="w-4 h-4" />
-                      <span>
-                        Created {formatDistanceToNow(new Date(community.createdAt))} ago
+<span className="text-sm text-gray-500 flex items-center gap-2">
+                        Created {community?.createdAt && isValid(new Date(community.createdAt)) 
+                          ? `${formatDistanceToNow(new Date(community.createdAt))} ago`
+                          : 'Date unavailable'}
                       </span>
                     </div>
                   </div>

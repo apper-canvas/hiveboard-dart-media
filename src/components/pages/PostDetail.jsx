@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
@@ -172,12 +172,14 @@ const handleSave = async () => {
               >
                 r/{post.communityName}
               </Link>
-              <span>•</span>
-              <span>Posted by u/{post.authorUsername}</span>
-              <span>•</span>
-              <span>{formatDistanceToNow(new Date(post.timestamp))} ago</span>
-              <ApperIcon 
-                name={getContentTypeIcon()} 
+<span>•</span>
+<span>Posted by u/{post.authorUsername}</span>
+<span>•</span>
+<span>{post?.timestamp && isValid(new Date(post.timestamp)) 
+? `${formatDistanceToNow(new Date(post.timestamp))} ago`
+: 'Date unavailable'}</span>
+<ApperIcon
+                name="MoreHorizontal"
                 className="w-4 h-4 text-gray-400 ml-auto" 
               />
             </div>

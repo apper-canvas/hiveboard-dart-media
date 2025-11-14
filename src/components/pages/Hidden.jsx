@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'react-toastify';
-import { hiddenService } from '@/services/api/hiddenService';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import Input from '@/components/atoms/Input';
-import Loading from '@/components/ui/Loading';
-import Empty from '@/components/ui/Empty';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow, isValid } from "date-fns";
+import { toast } from "react-toastify";
+import { hiddenService } from "@/services/api/hiddenService";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 
 const Hidden = () => {
   const [hiddenPosts, setHiddenPosts] = useState([]);
@@ -233,11 +233,12 @@ const Hidden = () => {
                           {post.content}
                         </p>
                       )}
-                      <div className="flex items-center justify-between">
+<div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 text-xs text-gray-500">
                           <span>r/{post.communityName}</span>
-                          <span>by u/{post.author}</span>
-                          <span>{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}</span>
+                          <span>{post?.createdAt && isValid(new Date(post.createdAt)) 
+                            ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
+                            : 'Date unavailable'}</span>
                           <span>{post.upvotes || 0} upvotes</span>
                         </div>
                         

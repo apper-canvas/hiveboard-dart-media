@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
-import ApperIcon from "@/components/ApperIcon";
-import VoteButtons from "@/components/molecules/VoteButtons";
-import CommentForm from "@/components/molecules/CommentForm";
+import React, { useState } from "react";
+import { formatDistanceToNow, isValid } from "date-fns";
 import { commentService } from "@/services/api/commentService";
 import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+import VoteButtons from "@/components/molecules/VoteButtons";
+import CommentForm from "@/components/molecules/CommentForm";
 
 const CommentThread = ({ 
   comment, 
@@ -130,15 +130,17 @@ const handleReplyAdded = (newReply) => {
                 u/{currentComment.authorUsername}
               </span>
               <span>•</span>
-              <span>
-                {formatDistanceToNow(new Date(currentComment.timestamp))} ago
+<span className="text-xs text-gray-500">
+                {currentComment?.timestamp && isValid(new Date(currentComment.timestamp)) 
+                  ? `${formatDistanceToNow(new Date(currentComment.timestamp))} ago`
+                  : 'Date unavailable'}
               </span>
-{currentComment.children && currentComment.children.length > 0 && (
+              {totalReplyCount > 0 && (
                 <>
                   <span>•</span>
                   <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-className="flex items-center gap-1 text-primary hover:text-indigo-600 font-medium"
+                    className="flex items-center gap-1 text-primary hover:text-indigo-600 font-medium"
                   >
                     <ApperIcon 
                       name={isCollapsed ? "Plus" : "Minus"} 

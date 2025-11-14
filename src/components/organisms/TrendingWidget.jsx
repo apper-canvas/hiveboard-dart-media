@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { formatDistanceToNow, isValid } from 'date-fns';
 import { communityService } from '@/services/api/communityService';
 import ApperIcon from '@/components/ApperIcon';
 import Loading from '@/components/ui/Loading';
-
 const TrendingWidget = ({ showTitle = true, maxItems = 3, compact = false }) => {
   const [trending, setTrending] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,9 +61,11 @@ const TrendingWidget = ({ showTitle = true, maxItems = 3, compact = false }) => 
           <h2 className={`${compact ? 'text-base' : 'text-lg'} font-bold text-gray-900 flex items-center gap-2`}>
             <ApperIcon name="TrendingUp" className={`${compact ? 'w-4 h-4' : 'w-5 h-5'} text-orange-500`} />
             Trending Today
-          </h2>
+</h2>
           <span className="text-xs text-gray-500">
-            Updated {lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            Updated {isValid(lastUpdate) 
+              ? lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              : 'Time unavailable'}
           </span>
         </div>
       )}

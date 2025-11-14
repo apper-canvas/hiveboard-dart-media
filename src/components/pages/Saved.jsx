@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'react-toastify';
-import { savedService } from '@/services/api/savedService';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import Input from '@/components/atoms/Input';
-import Loading from '@/components/ui/Loading';
-import Empty from '@/components/ui/Empty';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
+import { toast } from "react-toastify";
+import { savedService } from "@/services/api/savedService";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 
 const Saved = () => {
   const [savedPosts, setSavedPosts] = useState([]);
@@ -390,18 +390,20 @@ const Saved = () => {
                             {item.content}
                           </p>
                         )}
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
+<div className="flex items-center gap-4 text-xs text-gray-500">
                           <span>r/{item.communityName}</span>
-                          <span>by u/{item.author}</span>
-                          <span>{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</span>
+                          <span>{item?.createdAt && isValid(new Date(item.createdAt)) 
+                            ? formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })
+                            : 'Date unavailable'}</span>
                         </div>
                       </div>
                     ) : (
                       <div>
                         <p className="text-gray-900 mb-2">{item.content}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span>by u/{item.author}</span>
-                          <span>{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</span>
+<div className="flex items-center gap-4 text-xs text-gray-500">
+                          <span>{item?.createdAt && isValid(new Date(item.createdAt)) 
+                            ? formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })
+                            : 'Date unavailable'}</span>
                         </div>
                       </div>
                     )}
