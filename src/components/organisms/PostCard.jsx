@@ -164,19 +164,28 @@ toast.success("Post hidden from feed");
               <ApperIcon name="MessageSquare" className="w-4 h-4" />
               <span>{currentPost.commentCount} comments</span>
             </div>
-            <button className="flex items-center gap-1 hover:text-primary transition-colors">
+<button 
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1 hover:text-primary transition-colors"
+            >
               <ApperIcon name="Share" className="w-4 h-4" />
               <span>Share</span>
-</button>
-            <button 
-              onClick={handleSave}
+            </button>
+<button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSave();
+              }}
               className={`flex items-center gap-1 transition-colors ${isSaved ? 'text-primary' : 'hover:text-primary'}`}
             >
               <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
               <span>{isSaved ? "Saved" : "Save"}</span>
             </button>
             <button 
-              onClick={handleHide}
+onClick={(e) => {
+                e.stopPropagation();
+                handleHide();
+              }}
               className="flex items-center gap-1 hover:text-primary transition-colors"
             >
               <ApperIcon name="EyeOff" className="w-4 h-4" />

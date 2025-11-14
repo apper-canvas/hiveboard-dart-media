@@ -176,13 +176,19 @@ const handleReplyAdded = (newReply) => {
                     </button>
                   )}
 <button 
-                    onClick={handleSave}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSave();
+                    }}
                     className={`flex items-center gap-1 text-sm font-medium transition-colors ${isSaved ? 'text-primary' : 'text-gray-600 hover:text-primary'}`}
                   >
                     <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
                     {isSaved ? "Saved" : "Save"}
                   </button>
-                  <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-primary font-medium">
+<button 
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1 text-sm text-gray-600 hover:text-primary font-medium"
+                  >
                     <ApperIcon name="Share" className="w-4 h-4" />
                     Share
                   </button>
