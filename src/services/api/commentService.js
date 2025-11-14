@@ -39,6 +39,8 @@ const newComment = {
       authorUsername: commentData.authorUsername,
       upvotes: 1,
       downvotes: 0,
+      likes: 0,
+      isLiked: false,
       timestamp: Date.now(),
       parentId: commentData.parentId || null,
       depth: parentComment ? parentComment.depth + 1 : 0,
@@ -54,7 +56,7 @@ const newComment = {
     return { ...newComment };
   },
 
-  async vote(id, voteType) {
+async vote(id, voteType) {
     await delay(200);
     const commentIndex = comments.findIndex(c => c.Id === parseInt(id));
     if (commentIndex === -1) {
@@ -81,6 +83,28 @@ const newComment = {
       } else if (voteType === "down") {
         comment.downvotes++;
       }
+    }
+    
+    comments[commentIndex] = comment;
+    return { ...comment };
+  },
+
+  async like(id) {
+    await delay(200);
+    const commentIndex = comments.findIndex(c => c.Id === parseInt(id));
+    if (commentIndex === -1) {
+      throw new Error("Comment not found");
+    }
+    
+    const comment = { ...comments[commentIndex] };
+    
+    // Toggle like status
+    if (comment.isLiked) {
+      comment.likes = Math.max(0, comment.likes - 1);
+      comment.isLiked = false;
+    } else {
+      comment.likes = (comment.likes || 0) + 1;
+      comment.isLiked = true;
     }
     
     comments[commentIndex] = comment;

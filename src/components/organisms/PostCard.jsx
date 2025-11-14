@@ -11,7 +11,7 @@ const PostCard = ({ post, className }) => {
   const [currentPost, setCurrentPost] = useState(post);
   const navigate = useNavigate();
 
-  const handleVote = async (voteType) => {
+const handleVote = async (voteType) => {
     try {
       const updatedPost = await postService.vote(currentPost.Id, voteType);
       setCurrentPost(updatedPost);
@@ -25,6 +25,21 @@ const PostCard = ({ post, className }) => {
       }
     } catch (error) {
       toast.error("Failed to vote. Please try again.");
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const updatedPost = await postService.like(currentPost.Id);
+      setCurrentPost(updatedPost);
+      
+      if (updatedPost.isLiked) {
+        toast.success("Post liked!");
+      } else {
+        toast.success("Like removed");
+      }
+    } catch (error) {
+      toast.error("Failed to like post. Please try again.");
     }
   };
 
@@ -58,12 +73,20 @@ const PostCard = ({ post, className }) => {
           className="vote-buttons flex-shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
-          <VoteButtons 
-            upvotes={currentPost.upvotes}
-            downvotes={currentPost.downvotes}
-            userVote={currentPost.userVote}
-            onVote={handleVote}
-          />
+<div className="flex gap-4">
+            <VoteButtons 
+              upvotes={currentPost.upvotes}
+              downvotes={currentPost.downvotes}
+              userVote={currentPost.userVote}
+              onVote={handleVote}
+            />
+            <VoteButtons 
+              mode="like"
+              likes={currentPost.likes || 0}
+              isLiked={currentPost.isLiked || false}
+              onLike={handleLike}
+            />
+          </div>
         </div>
 
         {/* Content */}

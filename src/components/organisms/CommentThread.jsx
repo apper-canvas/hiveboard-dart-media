@@ -13,11 +13,24 @@ const CommentThread = ({
   onCommentVoted, 
   depth = 0 
 }) => {
-  const [currentComment, setCurrentComment] = useState(comment);
+const [currentComment, setCurrentComment] = useState(comment);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleVote = async (voteType) => {
+  // Calculate total reply count recursively
+  const getTotalReplyCount = (comment) => {
+    if (!comment.children || comment.children.length === 0) return 0;
+    
+    let count = comment.children.length;
+    comment.children.forEach(child => {
+      count += getTotalReplyCount(child);
+    });
+    return count;
+  };
+
+  const totalReplyCount = getTotalReplyCount(currentComment);
+
+const handleVote = async (voteType) => {
     try {
       const updatedComment = await commentService.vote(currentComment.Id, voteType);
       setCurrentComment(updatedComment);
@@ -32,6 +45,22 @@ const CommentThread = ({
       }
     } catch (error) {
       toast.error("Failed to vote. Please try again.");
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const updatedComment = await commentService.like(currentComment.Id);
+      setCurrentComment(updatedComment);
+      onCommentVoted(currentComment.Id, updatedComment);
+      
+      if (updatedComment.isLiked) {
+        toast.success("Comment liked!");
+      } else {
+        toast.success("Like removed");
+      }
+    } catch (error) {
+      toast.error("Failed to like comment. Please try again.");
     }
   };
 
@@ -59,13 +88,22 @@ const handleReplyAdded = (newReply) => {
         <div className="flex gap-3">
           {/* Vote Buttons */}
           <div className="flex-shrink-0">
-            <VoteButtons 
-              upvotes={currentComment.upvotes}
-              downvotes={currentComment.downvotes}
-              userVote={currentComment.userVote}
-              onVote={handleVote}
-              size="sm"
-            />
+<div className="flex gap-2">
+              <VoteButtons 
+                upvotes={currentComment.upvotes}
+                downvotes={currentComment.downvotes}
+                userVote={currentComment.userVote}
+                onVote={handleVote}
+                size="sm"
+              />
+              <VoteButtons 
+                mode="like"
+                likes={currentComment.likes || 0}
+                isLiked={currentComment.isLiked || false}
+                onLike={handleLike}
+                size="sm"
+              />
+            </div>
           </div>
 
           {/* Comment Content */}
@@ -79,7 +117,7 @@ const handleReplyAdded = (newReply) => {
               <span>
                 {formatDistanceToNow(new Date(currentComment.timestamp))} ago
               </span>
-              {currentComment.children && currentComment.children.length > 0 && (
+{currentComment.children && currentComment.children.length > 0 && (
                 <>
                   <span>•</span>
                   <button
@@ -92,6 +130,11 @@ className="flex items-center gap-1 text-primary hover:text-indigo-600 font-mediu
                     />
                     {isCollapsed ? "Expand" : "Collapse"}
                   </button>
+                  {isCollapsed && totalReplyCount > 0 && (
+                    <span className="text-xs text-gray-500 ml-1">
+                      ({totalReplyCount} {totalReplyCount === 1 ? 'reply' : 'replies'})
+                    </span>
+                  )}
                 </>
               )}
             </div>

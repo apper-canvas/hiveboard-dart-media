@@ -139,8 +139,10 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
       thumbnailUrl: postData.thumbnailUrl || null,
       authorUsername: postData.authorUsername,
       communityName: postData.communityName,
-      upvotes: 1,
+upvotes: 1,
       downvotes: 0,
+      likes: 0,
+      isLiked: false,
       commentCount: 0,
       timestamp: Date.now(),
       userVote: "up"
@@ -150,7 +152,7 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
     return { ...newPost };
   },
 
-  async vote(id, voteType) {
+async vote(id, voteType) {
     await delay(200);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
     if (postIndex === -1) {
@@ -177,6 +179,28 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
       } else if (voteType === "down") {
         post.downvotes++;
       }
+    }
+    
+    posts[postIndex] = post;
+    return { ...post };
+  },
+
+  async like(id) {
+    await delay(200);
+    const postIndex = posts.findIndex(p => p.Id === parseInt(id));
+    if (postIndex === -1) {
+      throw new Error("Post not found");
+    }
+    
+    const post = { ...posts[postIndex] };
+    
+    // Toggle like status
+    if (post.isLiked) {
+      post.likes = Math.max(0, post.likes - 1);
+      post.isLiked = false;
+    } else {
+      post.likes = (post.likes || 0) + 1;
+      post.isLiked = true;
     }
     
     posts[postIndex] = post;
