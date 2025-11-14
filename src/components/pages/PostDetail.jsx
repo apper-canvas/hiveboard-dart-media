@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
 import { awardService } from "@/services/api/awardService";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
-import VoteButtons from "@/components/molecules/VoteButtons";
 import AwardDisplay from "@/components/molecules/AwardDisplay";
+import VoteButtons from "@/components/molecules/VoteButtons";
 import AwardModal from "@/components/molecules/AwardModal";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
@@ -21,7 +21,7 @@ const [loading, setLoading] = useState(true);
   const [isHidden, setIsHidden] = useState(false);
   const [postAwards, setPostAwards] = useState([]);
   const [showAwardModal, setShowAwardModal] = useState(false);
-const loadPost = async () => {
+const loadPost = useCallback(async () => {
   try {
     setLoading(true);
     setError("");
@@ -43,7 +43,7 @@ const loadPost = async () => {
     setError(err.message || "Failed to load post");
     setLoading(false);
   }
-};
+}, [postId]);
 
 useEffect(() => {
     if (postId) {
