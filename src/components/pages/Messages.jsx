@@ -429,13 +429,13 @@ const buildMessageThreads = (messages) => {
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
                       {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
                     </div>
-                    <div>
+<div>
                       <h2 className="font-medium text-gray-900">
-<h2 className="font-medium text-gray-900">
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
                       </h2>
                       <p className="text-sm text-gray-500">Active now</p>
                     </div>
+                  </div>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
@@ -585,14 +585,14 @@ const buildMessageThreads = (messages) => {
                                   {reply.senderId === 1 ? 'J' : selectedConversation.participants.find(p => p.Id === reply.senderId)?.username.charAt(0).toUpperCase()}
                                 </div>
                                 
-                                <div className={cn("flex flex-col gap-1", reply.senderId === 1 && "items-end")}>
+<div className={cn("flex flex-col gap-1", reply.senderId === 1 && "items-end")}>
                                   <div className={cn(
                                     "rounded-2xl px-3 py-2 max-w-full break-words",
                                     reply.senderId === 1
                                       ? "bg-primary text-white rounded-br-sm" 
                                       : "bg-gray-100 text-gray-900 rounded-bl-sm"
                                   )}>
-<div 
+                                    <div 
                                       className="text-sm markdown-content"
                                       dangerouslySetInnerHTML={renderMarkdown(reply.content)}
                                     />
@@ -612,27 +612,24 @@ const buildMessageThreads = (messages) => {
                         )}
                       </div>
                     ))}
-                  </div>
-                )}
+)}
 
               {/* Message Input */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
-<div className="flex-1">
-                    <Textarea
-                      placeholder="Type a message... (Markdown supported)"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      disabled={sending}
-                      className="min-h-[60px] resize-none"
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSendMessage(e);
-                        }
-                      }}
-                    />
-                  </div>
+                <div className="flex gap-2">
+                  <Textarea
+                    placeholder="Type a message... (Markdown supported)"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    disabled={sending}
+                    className="min-h-[60px] resize-none flex-1"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage(e);
+                      }
+                    }}
+                  />
                   <Button
                     type="submit"
                     disabled={!newMessage.trim() || sending}
@@ -658,8 +655,10 @@ const buildMessageThreads = (messages) => {
 
         {/* Compose Modal */}
         {showCompose && (
+{/* Compose Modal */}
+        {showCompose && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-<div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900">New Message</h3>
                 <button
@@ -695,34 +694,33 @@ const buildMessageThreads = (messages) => {
                   />
                 </div>
 <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={sending}
-                  onClick={() => setShowCompose(false)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={!composeForm.recipient.trim() || sending}
-                  className="flex-1"
-                >
-                  {sending ? (
-                    <>
-                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <ApperIcon name="Send" className="w-4 h-4 mr-2" />
-                      Send
-                    </>
-                  )}
-                </Button>
-              </div>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={sending}
+                    onClick={() => setShowCompose(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={!composeForm.recipient.trim() || sending}
+                    className="flex-1"
+                  >
+                    {sending ? (
+                      <>
+                        <ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <ApperIcon name="Send" className="w-4 h-4 mr-2" />
+                        Send
+                      </>
+                    )}
+                  </Button>
               </form>
             </div>
           </div>
@@ -736,8 +734,7 @@ const buildMessageThreads = (messages) => {
               <p className="text-gray-600 mb-6">
                 Are you sure you want to block <strong>{showBlockConfirm.username}</strong>? 
                 You won't receive messages from them and they won't appear in your conversation list.
-              </p>
-              <div className="flex gap-3 justify-end">
+<div className="flex gap-3 justify-end">
                 <Button
                   variant="outline"
                   onClick={() => setShowBlockConfirm(null)}
@@ -746,14 +743,11 @@ const buildMessageThreads = (messages) => {
                 </Button>
                 <Button
                   variant="danger"
-<Button
-                  variant="danger"
                   onClick={() => handleBlockUser(showBlockConfirm.Id)}
                 >
                   Block User
                 </Button>
               </div>
-            </div>
           </div>
         )}
         {showReportModal && (
