@@ -22,28 +22,28 @@ const [loading, setLoading] = useState(true);
   const [postAwards, setPostAwards] = useState([]);
   const [showAwardModal, setShowAwardModal] = useState(false);
 const loadPost = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const postIdInt = parseInt(postId, 10);
-      if (isNaN(postIdInt)) {
-        setError("Invalid post ID");
-        setLoading(false);
-        return;
-      }
-      const postData = await postService.getById(postIdInt);
-      if (!postData) {
-        setError("Post not found");
-        setLoading(false);
-        return;
-      }
-      setPost(postData);
-    } catch (err) {
-      setError(err.message || "Failed to load post");
-    } finally {
+  try {
+    setLoading(true);
+    setError("");
+    const postIdInt = parseInt(postId, 10);
+    if (isNaN(postIdInt)) {
+      setError("Invalid post ID");
       setLoading(false);
+      return;
     }
-  };
+    const postData = await postService.getById(postIdInt);
+    if (!postData) {
+      setError("Post not found");
+      setLoading(false);
+      return;
+    }
+    setPost(postData);
+    setLoading(false);
+  } catch (err) {
+    setError(err.message || "Failed to load post");
+    setLoading(false);
+  }
+};
 
 useEffect(() => {
     if (postId) {
@@ -51,13 +51,13 @@ useEffect(() => {
     }
   }, [postId]);
 
-  useEffect(() => {
+useEffect(() => {
     // Check if post is saved or hidden after post is loaded
-    if (post) {
-      setIsSaved(postService.isPostSaved(parseInt(postId)));
-      setIsHidden(postService.isPostHidden(parseInt(postId)));
+    if (post && post.Id) {
+      setIsSaved(postService.isPostSaved(post.Id));
+      setIsHidden(postService.isPostHidden(post.Id));
     }
-  }, [post, postId]);
+  }, [post]);
 
   const handleVote = async (voteType) => {
     if (!post) return;
