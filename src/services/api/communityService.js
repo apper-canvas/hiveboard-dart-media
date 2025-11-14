@@ -149,18 +149,42 @@ return {
     );
   },
 
-  async create(communityData) {
+async create(communityData) {
     await delay(400);
     const newCommunity = {
+      Id: communities.length + 1,
       name: communityData.name.toLowerCase(),
       description: communityData.description,
       memberCount: 1,
       postCount: 0,
-      createdAt: Date.now()
+      createdAt: communityData.createdAt || Date.now(),
+      communityType: communityData.communityType || "Public",
+      isNSFW: communityData.isNSFW || false,
+      topics: communityData.topics || [],
+      iconUrl: communityData.iconUrl || null,
+      bannerUrl: communityData.bannerUrl || null,
+      rules: communityData.rules || [],
+      moderators: communityData.moderators || [],
+      theme: communityData.theme || {
+        primary: "#6366F1",
+        secondary: "#8B5CF6",
+        banner: "linear-gradient(135deg, #6366F1, #8B5CF6)",
+        accent: "#4F46E5"
+      },
+      onlineUsers: communityData.onlineUsers || 1
     };
     
     communities.push(newCommunity);
     return { ...newCommunity };
+  },
+
+  async validateUniqueName(name) {
+    await delay(200);
+    const normalizedName = name.toLowerCase().trim();
+    const exists = communities.some(community => 
+      community.name.toLowerCase() === normalizedName
+    );
+    return !exists;
   },
 
   async update(name, data) {

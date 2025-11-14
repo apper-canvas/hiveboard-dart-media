@@ -6,6 +6,12 @@
     "memberCount": 2847362,
     "postCount": 156789,
     "createdAt": 1577836800000,
+    "communityType": "Public",
+    "isNSFW": false,
+    "topics": ["Technology", "Innovation", "Startups", "Gadgets", "AI"],
+    "iconUrl": null,
+    "bannerUrl": null,
+    "onlineUsers": 85420,
     "theme": {
       "primary": "#0066CC",
       "secondary": "#1A73E8",

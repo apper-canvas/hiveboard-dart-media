@@ -254,15 +254,15 @@ if (communityName) {
           </h3>
           
           <div className="space-y-2">
-            <Link
-              to="/create"
+<Link
+              to="/create-community"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
             >
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center">
                 <ApperIcon name="Plus" className="w-4 h-4 text-white" />
               </div>
               <span className="font-medium group-hover:text-primary transition-colors">
-                Create Post
+                Create Community
               </span>
             </Link>
             

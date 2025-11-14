@@ -5,8 +5,8 @@ import Layout from "@/components/organisms/Layout";
 const Home = lazy(() => import("@/components/pages/Home"));
 const PostDetail = lazy(() => import("@/components/pages/PostDetail"));
 const Community = lazy(() => import("@/components/pages/Community"));
+const CreateCommunity = lazy(() => import("@/components/pages/CreateCommunity"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
-
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
     <div className="text-center space-y-4">
@@ -36,11 +36,19 @@ const mainRoutes = [
       </Suspense>
     )
   },
-  {
+{
     path: "r/:communityName",
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <Community />
+      </Suspense>
+    )
+  },
+  {
+    path: "create-community",
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <CreateCommunity />
       </Suspense>
     )
   },
