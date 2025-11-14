@@ -402,10 +402,10 @@ const buildMessageThreads = (messages) => {
                             </>
                           )}
                         </div>
-                      </div>
+</div>
                     </div>
                   );
-})}
+                })}
               </div>
             )}
           </div>
@@ -433,10 +433,10 @@ const buildMessageThreads = (messages) => {
                       <h2 className="font-medium text-gray-900">
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
                       </h2>
-                      <p className="text-sm text-gray-500">Active now</p>
+<p className="text-sm text-gray-500">Active now</p>
                     </div>
                   </div>
-<div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
                       className="p-2 hover:bg-gray-100"
@@ -597,7 +597,7 @@ Cancel
                                       dangerouslySetInnerHTML={renderMarkdown(reply.content)}
                                     />
                                   </div>
-                                  <div className="flex items-center gap-2">
+<div className="flex items-center gap-2">
                                     <p className="text-xs text-gray-400">
                                       {formatDistanceToNow(new Date(reply.timestamp), { addSuffix: true })}
                                     </p>
@@ -605,7 +605,7 @@ Cancel
                                       <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                                     )}
                                   </div>
-</div>
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -622,14 +622,15 @@ Cancel
                     <Textarea
                       placeholder="Type a message... (Markdown supported)"
                       value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
+onChange={(e) => setNewMessage(e.target.value)}
                       disabled={sending}
                       className="min-h-[60px] resize-none"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault();
                           handleSendMessage(e);
-}}
+                        }
+                      }}
                     />
                   </div>
                   <Button
@@ -649,7 +650,7 @@ Cancel
                 </div>
                 <div className="text-xs text-gray-500 mt-2">
                   <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
-</div>
+                </div>
               </form>
             </>
           )}
@@ -664,10 +665,12 @@ Cancel
                 <button
                   onClick={() => setShowCompose(false)}
                   className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
                 </button>
-<form onSubmit={handleStartConversation} className="space-y-4">
+              </div>
+              <form onSubmit={handleStartConversation} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     To:
@@ -680,18 +683,18 @@ Cancel
                     required
                   />
                 </div>
-<div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message:
-                </label>
-                  placeholder="Type your message..."
-                  value={composeForm.message}
-                  onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
-                  disabled={sending}
-                  rows={4}
-                />
-              </div>
-
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Message:
+                  </label>
+                  <Textarea
+                    placeholder="Type your message..."
+                    value={composeForm.message}
+                    onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
+                    disabled={sending}
+                    rows={4}
+                  />
+                </div>
               <div className="flex gap-3">
                 <Button
                   type="button"
@@ -700,16 +703,17 @@ Cancel
                   onClick={() => setShowCompose(false)}
                   className="flex-1"
                 >
-                  Cancel
+Cancel
                 </Button>
                 <Button
+                  type="submit"
                   variant="primary"
                   disabled={!composeForm.recipient.trim() || sending}
                   className="flex-1"
                 >
                   {sending ? (
                     <>
-<ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
+                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
                       Sending...
                     </>
                   ) : (
@@ -718,13 +722,14 @@ Cancel
                       Send
                     </>
                   )}
-</Button>
+                </Button>
               </div>
-            </form>
+              </form>
             </div>
           </div>
         )}
-{/* Block User Confirmation Modal */}
+
+        {/* Block User Confirmation Modal */}
         {showBlockConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
@@ -747,10 +752,11 @@ Cancel
                   Block User
                 </Button>
               </div>
-            </div>
+</div>
           </div>
         )}
-{/* Report Spam Modal */}
+
+        {/* Report Spam Modal */}
         {showReportModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
