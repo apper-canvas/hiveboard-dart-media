@@ -86,7 +86,129 @@ export const notificationService = {
     };
     
     notifications.unshift(newNotification);
+    
+    // Trigger email notification for important events
+    await this.triggerEmailNotification(newNotification);
+    
     return { ...newNotification };
+  },
+
+  // Group notifications by type and similar content
+  groupNotifications(notificationList) {
+    const groups = new Map();
+    
+    notificationList.forEach(notification => {
+      const groupKey = this.getGroupKey(notification);
+      
+      if (!groups.has(groupKey)) {
+        groups.set(groupKey, {
+          key: groupKey,
+          type: notification.type,
+          title: this.getGroupTitle(notification),
+          notifications: [],
+          count: 0,
+          latestTimestamp: notification.timestamp
+        });
+      }
+      
+      const group = groups.get(groupKey);
+      group.notifications.push(notification);
+      group.count++;
+      
+      if (notification.timestamp > group.latestTimestamp) {
+        group.latestTimestamp = notification.timestamp;
+      }
+    });
+    
+    return Array.from(groups.values()).sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+  },
+
+  getGroupKey(notification) {
+    // Group by type and target
+    switch (notification.type) {
+      case 'upvote_post':
+      case 'upvote_comment':
+        return `${notification.type}_${notification.targetId}`;
+      case 'reply':
+        return `reply_${notification.targetId}`;
+      case 'mention':
+        return `mention_${notification.targetId}`;
+      case 'new_follower':
+        return 'new_followers';
+      case 'award':
+        return `award_${notification.targetId}`;
+      default:
+        return `${notification.type}_${notification.Id}`;
+    }
+  },
+
+  getGroupTitle(notification) {
+    switch (notification.type) {
+      case 'upvote_post':
+        return 'Post Upvotes';
+      case 'upvote_comment':
+        return 'Comment Upvotes';
+      case 'reply':
+        return 'Replies';
+      case 'mention':
+        return 'Mentions';
+      case 'new_follower':
+        return 'New Followers';
+      case 'award':
+        return 'Awards';
+      case 'content_removed':
+        return 'Content Moderation';
+      case 'ban':
+        return 'Account Actions';
+      case 'mod_invite':
+        return 'Moderation Invites';
+      case 'message':
+        return 'Messages';
+      default:
+        return 'Notifications';
+    }
+  },
+
+  // Trigger email notifications for important events
+  async triggerEmailNotification(notification) {
+    try {
+      // Check if this notification type should trigger email
+      const emailTypes = ['reply', 'mention', 'award', 'mod_invite', 'ban', 'content_removed'];
+      
+      if (!emailTypes.includes(notification.type)) {
+        return;
+      }
+
+      // Get user preferences (in real app, this would be based on user ID)
+      const preferences = await this.getPreferences();
+      
+      if (!preferences.delivery.email) {
+        return;
+      }
+
+      // Check if this specific notification type is enabled for email
+      if (!preferences.types[notification.type]) {
+        return;
+      }
+
+      // Prepare email data
+      const emailData = {
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        targetType: notification.targetType,
+        targetId: notification.targetId,
+        timestamp: notification.timestamp,
+        metadata: notification.metadata
+      };
+
+      // Note: In production, this would make an API call to send email
+      console.info(`Email notification triggered for: ${notification.type}`);
+      
+    } catch (error) {
+      console.error('Failed to trigger email notification:', error);
+      // Don't throw error as this shouldn't block notification creation
+    }
   },
 
   // Utility method to get notification icon based on type
@@ -140,13 +262,13 @@ export const notificationService = {
 return displayMap[type] || 'Notification';
   },
 
-  // Notification preferences management
+// Notification preferences management
   getPreferences: async () => {
     try {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Return default preferences structure
+      // Return default preferences structure with enhanced email settings
       return {
         types: {
           upvote_post: true,
@@ -162,9 +284,23 @@ return displayMap[type] || 'Notification';
         },
         delivery: {
           email: true,
-          push: true
+          push: true,
+          emailImportantOnly: false, // Only send emails for important notifications
+          emailDigest: false // Send daily/weekly digest instead of individual emails
         },
-        frequency: 'instant' // instant, hourly, daily, weekly
+        frequency: 'instant', // instant, hourly, daily, weekly
+        emailTypes: {
+          upvote_post: false,
+          upvote_comment: false,
+          reply: true,
+          mention: true,
+          new_follower: false,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        }
       };
     } catch (error) {
       throw new Error('Failed to load notification preferences');
@@ -209,9 +345,23 @@ return displayMap[type] || 'Notification';
         },
         delivery: {
           email: true,
-          push: true
+          push: true,
+          emailImportantOnly: false,
+          emailDigest: false
         },
-        frequency: 'instant'
+        frequency: 'instant',
+        emailTypes: {
+          upvote_post: false,
+          upvote_comment: false,
+          reply: true,
+          mention: true,
+          new_follower: false,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        }
       };
     } catch (error) {
       throw new Error('Failed to reset notification preferences');
