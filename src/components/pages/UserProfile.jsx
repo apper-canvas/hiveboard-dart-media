@@ -645,12 +645,12 @@ if (!user) {
                     <div className="min-w-0 flex-1">
                       <div className="font-medium text-gray-900 truncate">r/{community.name}</div>
                       <div className="text-xs text-gray-600">{community.memberCount.toLocaleString()} members</div>
-                    </div>
+</div>
                   </Link>
-))}
+                ))}
               </div>
             </div>
-          </div>
+</div>
         </div>
       </div>
     </div>
