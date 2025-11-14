@@ -395,8 +395,8 @@ const buildMessageThreads = (messages) => {
                                 conversation.unreadCount > 0 ? "text-gray-900 font-medium" : "text-gray-600"
                               )}>
                                 {conversation.lastMessage.content}
-                              </p>
-<p className="text-xs text-gray-400 mt-1">
+</p>
+                              <p className="text-xs text-gray-400 mt-1">
                                 {formatDistanceToNow(new Date(conversation.lastMessage.timestamp), { addSuffix: true })}
                               </p>
                             </>
@@ -427,9 +427,9 @@ const buildMessageThreads = (messages) => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
-                      {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
+{selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
                     </div>
-<div>
+                    <div>
                       <h2 className="font-medium text-gray-900">
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
                       </h2>
@@ -557,12 +557,12 @@ const buildMessageThreads = (messages) => {
                                     size="sm"
                                   >
                                     Send
-                                  </Button>
+</Button>
                                   <Button
                                     onClick={() => {
                                       setShowReplyForm(null);
                                       setReplyMessage('');
-}}
+                                    }}
                                     variant="ghost"
                                     size="sm"
                                   >
@@ -581,11 +581,11 @@ const buildMessageThreads = (messages) => {
                                 "flex gap-3 max-w-[80%] group",
                                 reply.senderId === 1 ? "ml-auto flex-row-reverse" : ""
                               )}>
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+<div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                                   {reply.senderId === 1 ? 'J' : selectedConversation.participants.find(p => p.Id === reply.senderId)?.username.charAt(0).toUpperCase()}
                                 </div>
                                 
-<div className={cn("flex flex-col gap-1", reply.senderId === 1 && "items-end")}>
+                                <div className={cn("flex flex-col gap-1", reply.senderId === 1 && "items-end")}>
                                   <div className={cn(
                                     "rounded-2xl px-3 py-2 max-w-full break-words",
                                     reply.senderId === 1
@@ -609,11 +609,12 @@ const buildMessageThreads = (messages) => {
                               </div>
                             ))}
                           </div>
-                        )}
                       </div>
                     ))}
-)}
-
+</div>
+                )}
+              </div>
+              
               {/* Message Input */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
                 <div className="flex gap-2">
@@ -655,11 +656,6 @@ const buildMessageThreads = (messages) => {
 
         {/* Compose Modal */}
         {showCompose && (
-{/* Compose Modal */}
-        {showCompose && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
-              <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900">New Message</h3>
                 <button
                   onClick={() => setShowCompose(false)}
@@ -689,11 +685,11 @@ const buildMessageThreads = (messages) => {
                     placeholder="Type your message..."
                     value={composeForm.message}
                     onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
-                    disabled={sending}
+disabled={sending}
                     rows={4}
                   />
                 </div>
-<div className="flex gap-3">
+                <div className="flex gap-3">
                   <Button
                     type="button"
                     variant="secondary"
@@ -721,6 +717,7 @@ const buildMessageThreads = (messages) => {
                       </>
                     )}
                   </Button>
+                </div>
               </form>
             </div>
           </div>
@@ -728,14 +725,15 @@ const buildMessageThreads = (messages) => {
 
         {/* Block User Confirmation Modal */}
         {showBlockConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Block User</h3>
               <p className="text-gray-600 mb-6">
                 Are you sure you want to block <strong>{showBlockConfirm.username}</strong>? 
                 You won't receive messages from them and they won't appear in your conversation list.
-<div className="flex gap-3 justify-end">
-                <Button
+              </p>
+              <div className="flex gap-3 justify-end">
+                <Button>
                   variant="outline"
                   onClick={() => setShowBlockConfirm(null)}
                 >
@@ -748,6 +746,7 @@ const buildMessageThreads = (messages) => {
                   Block User
                 </Button>
               </div>
+            </div>
           </div>
         )}
         {showReportModal && (
