@@ -129,7 +129,7 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
     
     return sortedPosts;
   },
-  async create(postData) {
+async create(postData) {
     await delay(400);
     const newPost = {
       Id: Math.max(...posts.map(p => p.Id)) + 1,
@@ -139,7 +139,11 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
       thumbnailUrl: postData.thumbnailUrl || null,
       authorUsername: postData.authorUsername,
       communityName: postData.communityName,
-upvotes: 1,
+      flair: postData.flair || null,
+      isNSFW: postData.isNSFW || false,
+      isSpoiler: postData.isSpoiler || false,
+      isOC: postData.isOC || false,
+      upvotes: 1,
       downvotes: 0,
       likes: 0,
       isLiked: false,

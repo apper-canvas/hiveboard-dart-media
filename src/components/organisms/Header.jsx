@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ApperIcon from "@/components/ApperIcon";
 import SearchBar from "@/components/molecules/SearchBar";
 import Button from "@/components/atoms/Button";
+import PostCreator from "@/components/organisms/PostCreator";
 import { cn } from "@/utils/cn";
 
 const Header = ({ className }) => {
@@ -124,31 +125,10 @@ className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-indigo-600 
       </div>
 
       {/* Create Post Modal Placeholder */}
-      {showCreateModal && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          onClick={() => setShowCreateModal(false)}
-        >
-          <div 
-            className="bg-white rounded-xl p-6 w-full max-w-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Create Post</h2>
-              <button 
-                onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <ApperIcon name="X" className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="text-center py-8 text-gray-500">
-              <ApperIcon name="FileText" className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-              <p>Create post functionality will be implemented in PostCreator component</p>
-            </div>
-          </div>
-        </div>
-      )}
+<PostCreator 
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+      />
     </header>
   );
 };
