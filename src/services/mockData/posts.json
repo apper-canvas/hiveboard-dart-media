@@ -11,7 +11,8 @@
     "downvotes": 142,
     "commentCount": 389,
     "timestamp": 1703875200000,
-    "userVote": null
+"userVote": null,
+    "gilded": true
   },
   {
     "Id": 2,
@@ -25,7 +26,8 @@
     "downvotes": 23,
     "commentCount": 87,
     "timestamp": 1703788800000,
-    "userVote": "up"
+"userVote": "up",
+    "gilded": false
   },
   {
     "Id": 3,
@@ -39,7 +41,8 @@
     "downvotes": 45,
     "commentCount": 156,
     "timestamp": 1703702400000,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 4,
@@ -53,7 +56,8 @@
     "downvotes": 18,
     "commentCount": 234,
     "timestamp": 1703616000000,
-    "userVote": null
+"userVote": null,
+    "gilded": true
   },
   {
     "Id": 5,
@@ -67,7 +71,8 @@
     "downvotes": 234,
     "commentCount": 567,
     "timestamp": 1703529600000,
-    "userVote": "down"
+"userVote": "down",
+    "gilded": false
   },
   {
     "Id": 6,
@@ -81,7 +86,8 @@
     "downvotes": 89,
     "commentCount": 445,
     "timestamp": 1703443200000,
-    "userVote": null
+"userVote": null,
+    "gilded": true
   },
   {
     "Id": 7,
@@ -95,7 +101,8 @@
     "downvotes": 156,
     "commentCount": 678,
     "timestamp": 1703356800000,
-    "userVote": "up"
+"userVote": "up",
+    "gilded": false
   },
   {
     "Id": 8,
@@ -109,7 +116,8 @@
     "downvotes": 12,
     "commentCount": 89,
     "timestamp": 1703270400000,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 9,
@@ -123,7 +131,8 @@
     "downvotes": 567,
     "commentCount": 789,
     "timestamp": 1703184000000,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 10,
@@ -137,6 +146,7 @@
     "downvotes": 34,
     "commentCount": 178,
     "timestamp": 1703097600000,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   }
 ]

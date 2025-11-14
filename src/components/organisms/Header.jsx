@@ -96,7 +96,7 @@ className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-indigo-600 
                         <div className="text-xs text-gray-500">1,337 karma</div>
                       </div>
                       <Link 
-                        to="/profile"
+to="/profile/current_user"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setIsUserMenuOpen(false)}
                       >

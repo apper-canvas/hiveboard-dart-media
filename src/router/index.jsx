@@ -10,6 +10,7 @@ const CreateCommunity = lazy(() => import("@/components/pages/CreateCommunity"))
 const Saved = lazy(() => import("@/components/pages/Saved"));
 const Hidden = lazy(() => import("@/components/pages/Hidden"));
 const Analytics = lazy(() => import("@/components/pages/Analytics"));
+const UserProfile = lazy(() => import("@/components/pages/UserProfile"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
 
 const LoadingSpinner = () => (
@@ -62,6 +63,14 @@ const mainRoutes = [
     element: (
       <Suspense fallback={<LoadingSpinner />}>
         <CreateCommunity />
+      </Suspense>
+    )
+  },
+  {
+path: "profile/:username",
+    element: (
+      <Suspense fallback={<LoadingSpinner />}>
+        <UserProfile />
       </Suspense>
     )
   },

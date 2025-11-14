@@ -9,7 +9,8 @@
     "timestamp": 1703876400000,
     "parentId": null,
     "depth": 0,
-    "userVote": "up"
+"userVote": "up",
+    "gilded": false
   },
   {
     "Id": 2,
@@ -21,7 +22,8 @@
     "timestamp": 1703877000000,
     "parentId": null,
     "depth": 0,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 3,
@@ -33,7 +35,8 @@
     "timestamp": 1703877600000,
     "parentId": "2",
     "depth": 1,
-    "userVote": null
+"userVote": null,
+    "gilded": true
   },
   {
     "Id": 4,
@@ -45,7 +48,8 @@
     "timestamp": 1703878200000,
     "parentId": "3",
     "depth": 2,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 5,
@@ -57,7 +61,8 @@
     "timestamp": 1703789400000,
     "parentId": null,
     "depth": 0,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 6,
@@ -69,7 +74,8 @@
     "timestamp": 1703790000000,
     "parentId": "5",
     "depth": 1,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 7,
@@ -81,7 +87,8 @@
     "timestamp": 1703703000000,
     "parentId": null,
     "depth": 0,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 8,
@@ -93,7 +100,8 @@
     "timestamp": 1703616600000,
     "parentId": null,
     "depth": 0,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 9,
@@ -105,7 +113,8 @@
     "timestamp": 1703530200000,
     "parentId": null,
     "depth": 0,
-    "userVote": null
+"userVote": null,
+    "gilded": false
   },
   {
     "Id": 10,
@@ -117,6 +126,7 @@
     "timestamp": 1703443800000,
     "parentId": null,
     "depth": 0,
-    "userVote": null
+"userVote": null,
+    "gilded": true
   }
 ]

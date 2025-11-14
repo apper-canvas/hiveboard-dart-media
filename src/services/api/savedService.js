@@ -7,7 +7,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 let customCategories = JSON.parse(localStorage.getItem('savedCategories') || '["Reading List", "Favorites", "Later"]');
 
 export const savedService = {
-  // Get all saved posts
+// Get all saved posts
   async getSavedPosts() {
     return await postService.getSavedPosts();
   },
@@ -15,6 +15,20 @@ export const savedService = {
   // Get all saved comments
   async getSavedComments() {
     return await commentService.getSavedComments();
+  },
+
+  // Get saved content for user profile
+  async getUserSavedContent(username) {
+    await delay(300);
+    const [savedPosts, savedComments] = await Promise.all([
+      this.getSavedPosts(),
+      this.getSavedComments()
+    ]);
+    return {
+      posts: savedPosts,
+      comments: savedComments,
+      total: savedPosts.length + savedComments.length
+    };
   },
   
   // Category management
@@ -49,7 +63,7 @@ export const savedService = {
     return customCategories;
   },
   
-  // Item-category assignments
+// Item-category assignments
   async assignToCategory(itemId, category, itemType) {
     await delay(200);
     const savedCategories = JSON.parse(localStorage.getItem('savedItemCategories') || '{}');
@@ -75,7 +89,7 @@ export const savedService = {
   },
   
   // Bulk operations
-  async bulkUnsave(items) {
+async bulkUnsave(items) {
     await delay(400);
     const results = [];
     
@@ -110,5 +124,17 @@ export const savedService = {
     }
     
     return results;
+  },
+
+  // Get user's saved content for profile display
+  async getProfileSavedContent(username) {
+    await delay(300);
+    // In a real app, this would filter by username
+    // For now, return all saved content as if it belongs to the current user
+    const [posts, comments] = await Promise.all([
+      this.getSavedPosts(),
+      this.getSavedComments()
+    ]);
+    return [...posts.map(p => ({...p, type: 'post'})), ...comments.map(c => ({...c, type: 'comment'}))];
   }
 };
