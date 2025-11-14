@@ -32,7 +32,7 @@ export const commentService = {
     const parentComment = commentData.parentId ? 
       comments.find(c => c.Id === parseInt(commentData.parentId)) : null;
     
-    const newComment = {
+const newComment = {
       Id: Math.max(...comments.map(c => c.Id)) + 1,
       postId: commentData.postId.toString(),
       content: commentData.content,

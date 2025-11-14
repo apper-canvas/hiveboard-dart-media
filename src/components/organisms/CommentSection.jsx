@@ -31,8 +31,12 @@ const CommentSection = ({ postId, className }) => {
     }
   }, [postId]);
 
-  const handleCommentAdded = (newComment) => {
-    setComments(prev => [...prev, newComment]);
+const handleCommentAdded = (newComment) => {
+    setComments(prev => {
+      // Add the new comment/reply to the list
+      const updated = [...prev, newComment];
+      return updated;
+    });
   };
 
   const handleCommentVoted = (commentId, updatedComment) => {
@@ -97,7 +101,7 @@ const CommentSection = ({ postId, className }) => {
 
       {/* Comments Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-gray-900">
+<h3 className="text-lg font-bold text-gray-900">
           {comments.length} Comments
         </h3>
       </div>

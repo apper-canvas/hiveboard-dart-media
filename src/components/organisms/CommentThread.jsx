@@ -135,7 +135,7 @@ className="flex items-center gap-1 text-primary hover:text-indigo-600 font-mediu
       {!isCollapsed && currentComment.children && currentComment.children.length > 0 && (
         <div className="mt-3 space-y-3">
           {currentComment.children.map((childComment) => (
-            <CommentThread
+<CommentThread
               key={childComment.Id}
               comment={childComment}
               onCommentAdded={onCommentAdded}
