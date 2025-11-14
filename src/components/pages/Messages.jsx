@@ -807,7 +807,7 @@ const buildMessageThreads = (messages) => {
               </div>
             </div>
           </div>
-        </div>
+</div>
       )}
     </div>
   );
