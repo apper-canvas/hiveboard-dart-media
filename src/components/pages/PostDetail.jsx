@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
+import { awardService } from "@/services/api/awardService";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import VoteButtons from "@/components/molecules/VoteButtons";
+import AwardDisplay from "@/components/molecules/AwardDisplay";
+import AwardModal from "@/components/molecules/AwardModal";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 import CommentSection from "@/components/organisms/CommentSection";
@@ -16,6 +19,8 @@ const [loading, setLoading] = useState(true);
   const [commentCount, setCommentCount] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [postAwards, setPostAwards] = useState([]);
+  const [showAwardModal, setShowAwardModal] = useState(false);
   const loadPost = async () => {
     try {
       setLoading(true);
@@ -180,7 +185,7 @@ const handleSave = async () => {
 : 'Date unavailable'}</span>
 <ApperIcon
                 name="MoreHorizontal"
-                className="w-4 h-4 text-gray-400 ml-auto" 
+                className="w-4 h-4 text-gray-400 ml-auto"
               />
             </div>
 
@@ -235,6 +240,14 @@ const handleSave = async () => {
               >
                 <ApperIcon name="EyeOff" className="w-4 h-4" />
                 <span>Hide</span>
+</button>
+              <button
+                onClick={() => setShowAwardModal(true)}
+                className="flex items-center gap-2 hover:text-primary transition-colors"
+                title="Give Award"
+              >
+                <ApperIcon name="Gift" className="w-4 h-4" />
+                <span>Award</span>
               </button>
               <button className="flex items-center gap-2 hover:text-primary transition-colors">
                 <ApperIcon name="Flag" className="w-4 h-4" />
@@ -247,7 +260,26 @@ const handleSave = async () => {
 
       {/* Comments Section */}
 <CommentSection postId={postId} onCommentCountChange={setCommentCount} />
-    </div>
+{/* Awards Display */}
+        {postAwards.length > 0 && (
+          <div className="flex items-center gap-4 py-4 border-t border-gray-200">
+            <span className="text-sm font-semibold text-gray-700">Awards:</span>
+            <AwardDisplay awards={postAwards} />
+          </div>
+        )}
+
+        {/* Award Modal */}
+        <AwardModal
+          isOpen={showAwardModal}
+          onClose={() => setShowAwardModal(false)}
+          onAwardGiven={() => {
+            const awards = awardService.getPostAwards(post.Id);
+            setPostAwards(awards);
+          }}
+          contentType="post"
+          contentId={post.Id}
+        />
+      </div>
   );
 };
 

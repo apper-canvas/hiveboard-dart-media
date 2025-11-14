@@ -151,7 +151,7 @@ async create(postData) {
       isNSFW: postData.isNSFW || false,
       isSpoiler: postData.isSpoiler || false,
       isOC: postData.isOC || false,
-      upvotes: 1,
+upvotes: 1,
       downvotes: 0,
       likes: 0,
       isLiked: false,
@@ -161,7 +161,8 @@ async create(postData) {
       pollDuration: postData.pollDuration || null,
       pollOptions: postData.pollOptions || null,
       pollEndTime: postData.pollDuration ? Date.now() + (postData.pollDuration * 24 * 60 * 60 * 1000) : null,
-      pollActive: postData.pollDuration ? true : false
+      pollActive: postData.pollDuration ? true : false,
+      awards: []
     };
     
     posts.unshift(newPost);

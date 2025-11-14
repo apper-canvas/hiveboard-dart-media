@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { commentService } from "@/services/api/commentService";
+import { awardService } from "@/services/api/awardService";
 import { toast } from "react-toastify";
+import AwardDisplay from "@/components/molecules/AwardDisplay";
+import AwardModal from "@/components/molecules/AwardModal";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import VoteButtons from "@/components/molecules/VoteButtons";
@@ -16,6 +19,8 @@ const CommentThread = ({
 const [currentComment, setCurrentComment] = useState(comment);
 const [showReplyForm, setShowReplyForm] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [commentAwards, setCommentAwards] = useState(comment.awards || []);
+  const [showAwardModal, setShowAwardModal] = useState(false);
   const [isSaved, setIsSaved] = useState(commentService.isCommentSaved(comment.Id));
   // Calculate total reply count recursively
   const getTotalReplyCount = (comment) => {
@@ -148,15 +153,20 @@ const handleReplyAdded = (newReply) => {
                     />
                     {isCollapsed ? "Expand" : "Collapse"}
                   </button>
-                  {isCollapsed && totalReplyCount > 0 && (
-                    <span className="text-xs text-gray-500 ml-1">
-                      ({totalReplyCount} {totalReplyCount === 1 ? 'reply' : 'replies'})
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
+156]                  )}
+157]                  {isCollapsed && totalReplyCount > 0 && (
+158]                    <span className="text-xs text-gray-500 ml-1">
+159]                      ({totalReplyCount} {totalReplyCount === 1 ? 'reply' : 'replies'})
+160]                    </span>
+161]                  )}
+162]              )}
 
+            {/* Awards Display */}
+            {commentAwards.length > 0 && (
+              <div className="mt-2">
+                <AwardDisplay awards={commentAwards} />
+              </div>
+            )}
             {/* Content */}
             {!isCollapsed && (
               <>
@@ -175,7 +185,17 @@ const handleReplyAdded = (newReply) => {
                       Reply
                     </button>
                   )}
-<button 
+{/* Give Award Button */}
+            <button
+              onClick={() => setShowAwardModal(true)}
+              className="flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors hover:bg-gray-100 px-2 py-1 rounded group"
+              title="Give Award"
+            >
+              <ApperIcon name="Gift" size={14} />
+              <span className="opacity-0 group-hover:opacity-100">Award</span>
+            </button>
+
+            <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSave();
@@ -224,10 +244,21 @@ const handleReplyAdded = (newReply) => {
               depth={depth + 1}
             />
           ))}
-        </div>
-      )}
-    </div>
-  );
-};
+248]        </div>
+249]      )}
+
+        {/* Award Modal */}
+        <AwardModal
+          isOpen={showAwardModal}
+          onClose={() => setShowAwardModal(false)}
+          onAwardGiven={() => {
+            const awards = awardService.getCommentAwards(currentComment.Id);
+            setCommentAwards(awards);
+          }}
+262]          contentId={currentComment.Id}
+263]        />
+264]    );
+265]  };
+266]
 
 export default CommentThread;

@@ -38,14 +38,15 @@ const newComment = {
       postId: commentData.postId.toString(),
       content: commentData.content,
       authorUsername: commentData.authorUsername,
-      upvotes: 1,
+upvotes: 1,
       downvotes: 0,
       likes: 0,
       isLiked: false,
       timestamp: Date.now(),
       parentId: commentData.parentId || null,
       depth: parentComment ? parentComment.depth + 1 : 0,
-      userVote: "up"
+      userVote: "up",
+      awards: []
     };
     
     // Limit depth to 3 levels
