@@ -436,11 +436,11 @@ if (!user) {
         />
         
         {/* Profile Header */}
-        <div className="relative -mt-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div className="relative -mt-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex flex-col lg:flex-row lg:items-center gap-6">
               {/* Avatar and Basic Info */}
-<div className="flex items-center gap-6">
+              <div className="flex items-center gap-6">
                 <div className="relative">
                   <div 
                     className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-purple-600 border-4 border-white shadow-lg"
@@ -475,6 +475,7 @@ if (!user) {
                     </div>
                     <span>•</span>
                     <span>{user?.joinedAt ? getAccountAge(user.joinedAt) : '0d'} old</span>
+                  </div>
                 </div>
               </div>
 
@@ -507,7 +508,6 @@ if (!user) {
                 )}
               </div>
             </div>
-
 {/* Bio */}
             {user?.bio && (
               <div className="mt-6 pt-6 border-t border-gray-100">
@@ -541,8 +541,8 @@ if (!user) {
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-<div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
                 <div className="text-2xl font-bold text-primary">{user?.karma || 0}</div>
                 <div className="text-sm text-gray-600">Karma</div>
               </div>
@@ -598,8 +598,8 @@ if (!user) {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-{/* Trophies */}
+<div className="space-y-6">
+            {/* Trophies */}
             {user?.achievements && user.achievements.length > 0 && (
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-2 mb-4">
@@ -625,8 +625,8 @@ if (!user) {
             )}
 
             {/* Active Communities */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-<div className="flex items-center gap-2 mb-4">
+<div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
                 <ApperIcon name="Users" className="w-5 h-5 text-primary" />
                 <h3 className="font-semibold text-gray-900">Active Communities</h3>
               </div>
@@ -650,7 +650,7 @@ if (!user) {
                 ))}
               </div>
             </div>
-</div>
+          </div>
         </div>
       </div>
     </div>
