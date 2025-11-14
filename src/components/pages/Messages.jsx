@@ -418,13 +418,12 @@ const buildMessageThreads = (messages) => {
               <div className="text-center">
                 <ApperIcon name="MessageSquare" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
-                <p className="text-gray-500">Choose a conversation from the sidebar to start messaging</p>
-              </div>
-            </div>
+</div>
+</div>
 ) : (
-            <>
-              {/* Messages Header */}
-              <div className="p-4 border-b border-gray-200">
+<>
+{/* Messages Header */}
+<div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
@@ -643,18 +642,18 @@ const buildMessageThreads = (messages) => {
                       disabled={!newMessage.trim() || sending}
                       variant="primary"
                     >
-                      {sending ? (
-                        <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <ApperIcon name="Send" className="w-4 h-4" />
-                      )}
-                    </Button>
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
-                  </div>
-                </form>
-              </div>
+{sending ? (
+<ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
+) : (
+<ApperIcon name="Send" className="w-4 h-4" />
+)}
+</Button>
+</div>
+<div className="text-xs text-gray-500">
+<strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
+</div>
+</form>
+</div>
             </>
           )}
         </div>
@@ -727,12 +726,14 @@ const buildMessageThreads = (messages) => {
                       <ApperIcon name="Send" className="w-4 h-4 mr-2" />
                       Send
                     </>
-                  )}
-                </Button>
 </form>
-          </div>
-        </div>
-      )}
+</div>
+</div>
+)}
+
+{/* Block User Confirmation Modal */}
+{showBlockConfirm && (
+<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
 
       {/* Block User Confirmation Modal */}
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -794,18 +795,17 @@ const buildMessageThreads = (messages) => {
                   Cancel
                 </Button>
                 <Button
-                  variant="danger"
-                  onClick={() => handleReportSpam(showReportModal, reportReason)}
-                  disabled={!reportReason}
-                >
+variant="danger"
+onClick={() => handleReportSpam(showReportModal, reportReason)}
+disabled={!reportReason}
+>
 Report
-                </Button>
-              </div>
-            </div>
-        </div>
-      )}
-    </div>
-  );
+</Button>
+</div>
+</div>
+)}
+</div>
+);
 };
 
 export default Messages;
