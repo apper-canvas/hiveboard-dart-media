@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
@@ -6,7 +6,60 @@ import ApperIcon from "@/components/ApperIcon";
 import SearchBar from "@/components/molecules/SearchBar";
 import PostCreator from "@/components/organisms/PostCreator";
 import Button from "@/components/atoms/Button";
+import { notificationService } from "@/services/api/notificationService";
 
+// Notification Button Component
+const NotificationButton = () => {
+  const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const loadUnreadCount = async () => {
+    try {
+      setLoading(true);
+      const count = await notificationService.getUnreadCount();
+      setUnreadCount(count);
+    } catch (err) {
+      console.error('Error loading unread count:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUnreadCount();
+    
+    // Poll for updates every 30 seconds
+    const interval = setInterval(loadUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleNotificationClick = () => {
+    navigate('/notifications');
+  };
+
+  return (
+    <button
+      onClick={handleNotificationClick}
+      disabled={loading}
+      className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+      title="View notifications"
+    >
+      <ApperIcon 
+        name={loading ? "Loader2" : "Bell"} 
+        className={cn(
+          "w-5 h-5 text-gray-600",
+          loading && "animate-spin"
+        )} 
+      />
+      {unreadCount > 0 && (
+        <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs font-semibold rounded-full flex items-center justify-center">
+          {unreadCount > 99 ? '99+' : unreadCount}
+        </div>
+      )}
+    </button>
+  );
+};
 const Header = ({ className }) => {
   // Mock authentication state - replace with actual auth service
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,11 +103,15 @@ const Header = ({ className }) => {
           </div>
 
           {/* Actions */}
+{/* Actions */}
           <div className="flex items-center gap-3">
             {/* Mobile Search */}
             <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
               <ApperIcon name="Search" className="w-5 h-5 text-gray-600" />
             </button>
+
+            {/* Notifications */}
+            <NotificationButton />
 
             {/* Create Post */}
             <Button 
@@ -69,11 +126,10 @@ const Header = ({ className }) => {
             {/* Mobile Create Post */}
             <button 
               onClick={handleCreatePost}
-className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 transition-all"
+              className="sm:hidden p-2 rounded-lg bg-gradient-to-r from-primary to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 transition-all"
             >
               <ApperIcon name="Plus" className="w-5 h-5" />
             </button>
-
             {/* User Menu */}
 <div className="relative">
               {isLoggedIn ? (
