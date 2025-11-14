@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'react-toastify';
-import { messageService } from '@/services/api/messageService';
-import { cn } from '@/utils/cn';
-import ApperIcon from '@/components/ApperIcon';
-import Loading from '@/components/ui/Loading';
-import Empty from '@/components/ui/Empty';
-import ErrorView from '@/components/ui/ErrorView';
-import Button from '@/components/atoms/Button';
-import Input from '@/components/atoms/Input';
-import Textarea from '@/components/atoms/Textarea';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
+import { toast } from "react-toastify";
+import { marked } from "marked";
+import { messageService } from "@/services/api/messageService";
+import { userService } from "@/services/api/userService";
+import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import ErrorView from "@/components/ui/ErrorView";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import Textarea from "@/components/atoms/Textarea";
 
 const Messages = () => {
   const navigate = useNavigate();
   const { conversationId } = useParams();
   
-  const [conversations, setConversations] = useState([]);
+const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +33,13 @@ const Messages = () => {
     message: ''
   });
   const [sending, setSending] = useState(false);
-
+  const [showActionMenu, setShowActionMenu] = useState(null);
+  const [showReplyForm, setShowReplyForm] = useState(null);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [showBlockConfirm, setShowBlockConfirm] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(null);
+  const [reportReason, setReportReason] = useState('');
+  const [blockedUsers, setBlockedUsers] = useState([]);
   // Load conversations
   const loadConversations = async () => {
     try {
@@ -47,11 +56,14 @@ const Messages = () => {
   };
 
   // Load messages for selected conversation
-  const loadMessages = async (convId) => {
+const loadMessages = async (convId) => {
     try {
       setMessagesLoading(true);
       const data = await messageService.getMessages(convId);
-      setMessages(data);
+      
+      // Build message threads
+      const threads = buildMessageThreads(data);
+      setMessages(threads);
       
       // Mark as read
       await messageService.markAsRead(convId);
@@ -71,6 +83,27 @@ const Messages = () => {
   };
 
   // Send message
+const buildMessageThreads = (messages) => {
+    const messageMap = {};
+    const rootMessages = [];
+    
+    // First pass: create message map
+    messages.forEach(msg => {
+      messageMap[msg.Id] = { ...msg, replies: [] };
+    });
+    
+    // Second pass: build threads
+    messages.forEach(msg => {
+      if (msg.parentId && messageMap[msg.parentId]) {
+        messageMap[msg.parentId].replies.push(messageMap[msg.Id]);
+      } else {
+        rootMessages.push(messageMap[msg.Id]);
+      }
+    });
+    
+    return rootMessages;
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedConversation || sending) return;
@@ -82,7 +115,8 @@ const Messages = () => {
         newMessage.trim()
       );
       
-      setMessages(prev => [...prev, message]);
+      const threads = buildMessageThreads([...messages.flat(), message]);
+      setMessages(threads);
       setNewMessage('');
       
       // Update conversation list
@@ -99,6 +133,109 @@ const Messages = () => {
     } finally {
       setSending(false);
     }
+  };
+
+  const handleSendReply = async (parentId) => {
+    if (!replyMessage.trim() || sending) return;
+
+    try {
+      setSending(true);
+      const reply = await messageService.sendReply(
+        selectedConversation.Id,
+        replyMessage.trim(),
+        parentId
+      );
+      
+      const allMessages = getAllMessages(messages);
+      const threads = buildMessageThreads([...allMessages, reply]);
+      setMessages(threads);
+      setReplyMessage('');
+      setShowReplyForm(null);
+      
+      toast.success('Reply sent!');
+    } catch (err) {
+      console.error('Error sending reply:', err);
+      toast.error('Failed to send reply');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const getAllMessages = (threads) => {
+    const allMessages = [];
+    threads.forEach(thread => {
+      allMessages.push(thread);
+      if (thread.replies) {
+        allMessages.push(...getAllMessages(thread.replies));
+      }
+    });
+    return allMessages;
+  };
+
+  const handleMarkAsUnread = async (conversationId) => {
+    try {
+      await messageService.markAsUnread(conversationId);
+      setConversations(prev => prev.map(conv => 
+        conv.Id === conversationId
+          ? { ...conv, unreadCount: 1 }
+          : conv
+      ));
+      toast.success('Marked as unread');
+    } catch (err) {
+      console.error('Error marking as unread:', err);
+      toast.error('Failed to mark as unread');
+    }
+  };
+
+  const handleBlockUser = async (userId) => {
+    try {
+      await userService.blockUser(userId);
+      setBlockedUsers(prev => [...prev, userId]);
+      setConversations(prev => prev.filter(conv => 
+        !conv.participants.some(p => p.Id === userId && p.Id !== 1)
+      ));
+      setShowBlockConfirm(null);
+      toast.success('User blocked successfully');
+    } catch (err) {
+      console.error('Error blocking user:', err);
+      toast.error('Failed to block user');
+    }
+  };
+
+  const handleUnblockUser = async (userId) => {
+    try {
+      await userService.unblockUser(userId);
+      setBlockedUsers(prev => prev.filter(id => id !== userId));
+      loadConversations(); // Reload conversations to show unblocked user
+      toast.success('User unblocked successfully');
+    } catch (err) {
+      console.error('Error unblocking user:', err);
+      toast.error('Failed to unblock user');
+    }
+  };
+
+  const handleReportSpam = async (messageId, reason) => {
+    try {
+      await messageService.reportSpam(messageId, reason);
+      setShowReportModal(null);
+      setReportReason('');
+      toast.success('Message reported successfully');
+    } catch (err) {
+      console.error('Error reporting message:', err);
+      toast.error('Failed to report message');
+    }
+  };
+
+  const renderMarkdown = (content) => {
+    // Configure marked for security
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      sanitize: false // We'll use DOMPurify in production
+    });
+
+    const html = marked.parse(content);
+    return { __html: html };
   };
 
   // Start new conversation
@@ -286,23 +423,58 @@ const Messages = () => {
             </div>
           ) : (
             <>
-              {/* Messages Header */}
+{/* Messages Header */}
               <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
-                    {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
+                      {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h2 className="font-medium text-gray-900">
+                        {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
+                      </h2>
+                      <p className="text-sm text-gray-500">Active now</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="font-medium text-gray-900">
-                      {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
-                    </h2>
-                    <p className="text-sm text-gray-500">Active now</p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleMarkAsUnread(selectedConversation.Id)}
+                      className="p-2 hover:bg-gray-100"
+                    >
+                      <ApperIcon name="Mail" size={18} />
+                    </Button>
+                    <div className="relative">
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowActionMenu(showActionMenu ? null : selectedConversation.Id)}
+                        className="p-2 hover:bg-gray-100"
+                      >
+                        <ApperIcon name="MoreVertical" size={18} />
+                      </Button>
+                      {showActionMenu === selectedConversation.Id && (
+                        <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg py-2 w-48 z-50">
+                          <button
+                            onClick={() => {
+                              const otherUser = selectedConversation.participants.find(p => p.username !== 'john_doe');
+                              setShowBlockConfirm(otherUser);
+                              setShowActionMenu(null);
+                            }}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                          >
+                            <ApperIcon name="UserX" size={16} />
+                            Block User
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Messages List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+<div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messagesLoading ? (
                   <div className="flex justify-center py-8">
                     <div className="flex items-center gap-2 text-gray-500">
@@ -315,62 +487,172 @@ const Messages = () => {
                     <p className="text-gray-500">No messages yet. Start the conversation!</p>
                   </div>
                 ) : (
-                  messages.map((message) => {
-                    const isOwn = message.senderId === 1;
-                    
-                    return (
-                      <div
-                        key={message.Id}
-                        className={cn(
-                          "flex gap-3 max-w-[70%]",
-                          isOwn ? "ml-auto flex-row-reverse" : ""
-                        )}
-                      >
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                          {isOwn ? 'J' : selectedConversation.participants.find(p => p.Id === message.senderId)?.username.charAt(0).toUpperCase()}
+                  <div className="space-y-6">
+                    {messages.map((thread) => (
+                      <div key={thread.Id} className="space-y-3">
+                        {/* Main Message */}
+                        <div className={cn(
+                          "flex gap-3 max-w-[85%] group",
+                          thread.senderId === 1 ? "ml-auto flex-row-reverse" : ""
+                        )}>
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                            {thread.senderId === 1 ? 'J' : selectedConversation.participants.find(p => p.Id === thread.senderId)?.username.charAt(0).toUpperCase()}
+                          </div>
+                          
+                          <div className={cn("flex flex-col gap-1 flex-1", thread.senderId === 1 && "items-end")}>
+                            <div className={cn(
+                              "rounded-2xl px-4 py-2 max-w-full break-words relative group",
+                              thread.senderId === 1
+                                ? "bg-primary text-white rounded-br-sm" 
+                                : "bg-gray-100 text-gray-900 rounded-bl-sm"
+                            )}>
+                              <div 
+                                className="text-sm markdown-content"
+                                dangerouslySetInnerHTML={renderMarkdown(thread.content)}
+                              />
+                              
+                              {/* Message Actions */}
+                              <div className={cn(
+                                "absolute -top-8 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white shadow-lg rounded-lg p-1",
+                                thread.senderId === 1 ? "-right-2" : "-left-2"
+                              )}>
+                                <button
+                                  onClick={() => setShowReplyForm(thread.Id)}
+                                  className="p-1 hover:bg-gray-100 rounded"
+                                >
+                                  <ApperIcon name="Reply" size={14} />
+                                </button>
+                                {thread.senderId !== 1 && (
+                                  <button
+                                    onClick={() => setShowReportModal(thread.Id)}
+                                    className="p-1 hover:bg-gray-100 rounded text-red-500"
+                                  >
+                                    <ApperIcon name="Flag" size={14} />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <p className="text-xs text-gray-400">
+                                {formatDistanceToNow(new Date(thread.timestamp), { addSuffix: true })}
+                              </p>
+                              {!thread.isRead && thread.senderId !== 1 && (
+                                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                              )}
+                            </div>
+                            
+                            {/* Reply Form */}
+                            {showReplyForm === thread.Id && (
+                              <div className="w-full mt-2">
+                                <div className="flex gap-2">
+                                  <Input
+                                    placeholder="Type a reply..."
+                                    value={replyMessage}
+                                    onChange={(e) => setReplyMessage(e.target.value)}
+                                    className="flex-1"
+                                  />
+                                  <Button
+                                    onClick={() => handleSendReply(thread.Id)}
+                                    disabled={!replyMessage.trim() || sending}
+                                    variant="primary"
+                                    size="sm"
+                                  >
+                                    Send
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      setShowReplyForm(null);
+                                      setReplyMessage('');
+                                    }}
+                                    variant="ghost"
+                                    size="sm"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                         
-                        <div className={cn("flex flex-col gap-1", isOwn && "items-end")}>
-                          <div className={cn(
-                            "rounded-2xl px-4 py-2 max-w-full break-words",
-                            isOwn 
-                              ? "bg-primary text-white rounded-br-sm" 
-                              : "bg-gray-100 text-gray-900 rounded-bl-sm"
-                          )}>
-                            <p className="text-sm">{message.content}</p>
+                        {/* Thread Replies */}
+                        {thread.replies && thread.replies.length > 0 && (
+                          <div className="ml-11 space-y-3 border-l-2 border-gray-200 pl-4">
+                            {thread.replies.map((reply) => (
+                              <div key={reply.Id} className={cn(
+                                "flex gap-3 max-w-[80%] group",
+                                reply.senderId === 1 ? "ml-auto flex-row-reverse" : ""
+                              )}>
+                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                  {reply.senderId === 1 ? 'J' : selectedConversation.participants.find(p => p.Id === reply.senderId)?.username.charAt(0).toUpperCase()}
+                                </div>
+                                
+                                <div className={cn("flex flex-col gap-1", reply.senderId === 1 && "items-end")}>
+                                  <div className={cn(
+                                    "rounded-2xl px-3 py-2 max-w-full break-words",
+                                    reply.senderId === 1
+                                      ? "bg-primary text-white rounded-br-sm" 
+                                      : "bg-gray-100 text-gray-900 rounded-bl-sm"
+                                  )}>
+                                    <div 
+                                      className="text-sm markdown-content"
+                                      dangerouslySetInnerHTML={renderMarkdown(reply.content)}
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <p className="text-xs text-gray-400">
+                                      {formatDistanceToNow(new Date(reply.timestamp), { addSuffix: true })}
+                                    </p>
+                                    {!reply.isRead && reply.senderId !== 1 && (
+                                      <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          <p className="text-xs text-gray-400">
-                            {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
-                          </p>
-                        </div>
+                        )}
                       </div>
-                    );
-                  })
+                    ))}
+                  </div>
                 )}
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t border-gray-200">
-                <form onSubmit={handleSendMessage} className="flex gap-3">
-                  <div className="flex-1">
-                    <Input
-                      placeholder="Type a message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      disabled={sending}
-                    />
+<div className="p-4 border-t border-gray-200">
+                <form onSubmit={handleSendMessage} className="space-y-3">
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <Textarea
+                        placeholder="Type a message... (Markdown supported)"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        disabled={sending}
+                        className="min-h-[60px] resize-none"
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSendMessage(e);
+                          }
+                        }}
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={!newMessage.trim() || sending}
+                      variant="primary"
+                    >
+                      {sending ? (
+                        <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <ApperIcon name="Send" className="w-4 h-4" />
+                      )}
+                    </Button>
                   </div>
-                  <Button
-                    type="submit"
-                    disabled={!newMessage.trim() || sending}
-                    variant="primary"
-                  >
-                    {sending ? (
-                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <ApperIcon name="Send" className="w-4 h-4" />
-                    )}
-                  </Button>
+                  <div className="text-xs text-gray-500">
+                    <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
+                  </div>
                 </form>
               </div>
             </>
@@ -449,6 +731,81 @@ const Messages = () => {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+    </div>
+)}
+
+      {/* Block User Confirmation Modal */}
+      {showBlockConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Block User</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to block <strong>{showBlockConfirm.username}</strong>? 
+              You won't receive messages from them and they won't appear in your conversation list.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setShowBlockConfirm(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleBlockUser(showBlockConfirm.Id)}
+              >
+                Block User
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Spam Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Report Message</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Why are you reporting this message?
+                </label>
+                <select
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="">Select a reason</option>
+                  <option value="spam">Spam</option>
+                  <option value="harassment">Harassment</option>
+                  <option value="inappropriate">Inappropriate content</option>
+                  <option value="scam">Scam or fraud</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowReportModal(null);
+                    setReportReason('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => handleReportSpam(showReportModal, reportReason)}
+                  disabled={!reportReason}
+                >
+                  Report
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}

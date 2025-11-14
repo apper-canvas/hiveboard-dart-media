@@ -1,4 +1,5 @@
 import usersData from "@/services/mockData/users.json";
+import React from "react";
 
 let users = [...usersData];
 
@@ -102,8 +103,36 @@ async update(username, data) {
     if (userIndex === -1) {
       throw new Error("User not found");
     }
-    
-    users.splice(userIndex, 1);
+users.splice(userIndex, 1);
     return true;
+  },
+
+  // Block user functionality
+  async blockUser(userId) {
+    await delay(300);
+    // In a real app, this would update user preferences/blocked list
+    // For now, we'll just simulate the API call
+    return { success: true, message: 'User blocked successfully' };
+  },
+
+  // Unblock user functionality  
+  async unblockUser(userId) {
+    await delay(300);
+    // In a real app, this would remove from blocked list
+    return { success: true, message: 'User unblocked successfully' };
+  },
+
+  // Get blocked users list
+  async getBlockedUsers() {
+    await delay(200);
+    // In a real app, this would fetch from user preferences
+    return [];
+  },
+
+  // Report user functionality
+  async reportUser(userId, reason) {
+    await delay(400);
+    // In a real app, this would submit to moderation system
+    return { success: true, message: 'User reported successfully' };
   }
 };

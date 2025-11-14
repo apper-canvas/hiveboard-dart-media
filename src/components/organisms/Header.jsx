@@ -62,9 +62,10 @@ const NotificationButton = () => {
 };
 
 const MessageButton = () => {
-  const navigate = useNavigate();
+const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isPolling, setIsPolling] = useState(true);
 
   const loadUnreadCount = async () => {
     try {
@@ -78,13 +79,33 @@ const MessageButton = () => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     loadUnreadCount();
     
-    // Poll for updates every 30 seconds
-    const interval = setInterval(loadUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    // Poll for updates every 30 seconds when tab is active
+    let interval;
+    if (isPolling) {
+      interval = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          loadUnreadCount();
+        }
+      }, 30000);
+    }
+    
+    // Handle tab visibility changes
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isPolling) {
+        loadUnreadCount();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isPolling]);
 
   const handleMessageClick = () => {
     navigate('/messages');
