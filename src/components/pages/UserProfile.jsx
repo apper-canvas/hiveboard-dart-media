@@ -649,15 +649,11 @@ if (!user) {
                   </Link>
                 ))}
               </div>
-            </div>
+</div>
           </div>
         </div>
       </div>
     </div>
-  );
-};
-
-export default UserProfile;
   );
 };
 
