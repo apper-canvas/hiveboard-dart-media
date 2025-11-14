@@ -167,14 +167,11 @@ const handleReplyAdded = (newReply) => {
               <div className="mt-2">
                 <AwardDisplay awards={commentAwards} />
               </div>
-            )}
+)}
             {/* Content */}
             {!isCollapsed && (
               <>
                 <div className="text-gray-900 mb-3">
-                  {currentComment.content}
-                </div>
-<div className="text-gray-900 mb-3">
                   {currentComment.content}
                 </div>
 
@@ -215,6 +212,9 @@ const handleReplyAdded = (newReply) => {
                   >
                     <ApperIcon name="Share" className="w-4 h-4" />
                     Share
+                  </button>
+                </div>
+
                 {/* Reply Form */}
                 {showReplyForm && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
@@ -247,9 +247,7 @@ const handleReplyAdded = (newReply) => {
           ))}
         </div>
       )}
-)}
-
-      {/* Award Modal */}
+{/* Award Modal */}
       <AwardModal
         isOpen={showAwardModal}
         onClose={() => setShowAwardModal(false)}
@@ -257,12 +255,6 @@ const handleReplyAdded = (newReply) => {
           const awards = awardService.getCommentAwards(currentComment.Id);
           setCommentAwards(awards);
         }}
-        contentId={currentComment.Id}
-      />
-    </div>
-  );
-};
-}}
         contentId={currentComment.Id}
       />
     </div>

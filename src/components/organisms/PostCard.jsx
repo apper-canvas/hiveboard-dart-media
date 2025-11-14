@@ -138,14 +138,13 @@ const handleHide = async () => {
     navigate(`/post/${currentPost.Id}`);
   };
 
-  const getContentTypeIcon = () => {
+const getContentTypeIcon = () => {
     switch (currentPost.contentType) {
       case "image":
         return "Image";
       case "link":
         return "Link";
       case "poll":
-case "poll":
         return "BarChart3";
       default:
         return "FileText";
@@ -347,21 +346,21 @@ case "poll":
                 className="flex items-center gap-1 hover:text-primary transition-colors"
               >
                 <ApperIcon name="EyeOff" className="w-4 h-4" />
-                <span>Hide</span>
+<span>Hide</span>
               </button>
               <button
                 onClick={() => setShowAwardModal(true)}
                 className="flex items-center gap-2 hover:text-primary transition-colors group"
                 title="Give Award"
-<ApperIcon name="Gift" className="w-4 h-4" />
+              >
+                <ApperIcon name="Gift" className="w-4 h-4" />
                 <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
               </button>
             </div>
-          </>
+</>
         )}
       </div>
 
-      {/* Thumbnail */}
       {/* Thumbnail */}
       {currentPost.thumbnailUrl && (
         <div className="flex-shrink-0">
@@ -386,6 +385,7 @@ case "poll":
       />
     </div>
   );
+};
 };
 
 export default PostCard;
