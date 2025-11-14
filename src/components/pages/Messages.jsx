@@ -1,0 +1,459 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { formatDistanceToNow } from 'date-fns';
+import { toast } from 'react-toastify';
+import { messageService } from '@/services/api/messageService';
+import { cn } from '@/utils/cn';
+import ApperIcon from '@/components/ApperIcon';
+import Loading from '@/components/ui/Loading';
+import Empty from '@/components/ui/Empty';
+import ErrorView from '@/components/ui/ErrorView';
+import Button from '@/components/atoms/Button';
+import Input from '@/components/atoms/Input';
+import Textarea from '@/components/atoms/Textarea';
+
+const Messages = () => {
+  const navigate = useNavigate();
+  const { conversationId } = useParams();
+  
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showCompose, setShowCompose] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
+  const [composeForm, setComposeForm] = useState({
+    recipient: '',
+    message: ''
+  });
+  const [sending, setSending] = useState(false);
+
+  // Load conversations
+  const loadConversations = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await messageService.getConversations();
+      setConversations(data);
+    } catch (err) {
+      console.error('Error loading conversations:', err);
+      setError('Failed to load conversations. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load messages for selected conversation
+  const loadMessages = async (convId) => {
+    try {
+      setMessagesLoading(true);
+      const data = await messageService.getMessages(convId);
+      setMessages(data);
+      
+      // Mark as read
+      await messageService.markAsRead(convId);
+      
+      // Update conversation unread count
+      setConversations(prev => prev.map(conv => 
+        conv.Id === parseInt(convId) 
+          ? { ...conv, unreadCount: 0 }
+          : conv
+      ));
+    } catch (err) {
+      console.error('Error loading messages:', err);
+      toast.error('Failed to load messages');
+    } finally {
+      setMessagesLoading(false);
+    }
+  };
+
+  // Send message
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedConversation || sending) return;
+
+    try {
+      setSending(true);
+      const message = await messageService.sendMessage(
+        selectedConversation.Id,
+        newMessage.trim()
+      );
+      
+      setMessages(prev => [...prev, message]);
+      setNewMessage('');
+      
+      // Update conversation list
+      setConversations(prev => prev.map(conv => 
+        conv.Id === selectedConversation.Id
+          ? { ...conv, lastMessage: message, updatedAt: message.timestamp }
+          : conv
+      ));
+      
+      toast.success('Message sent!');
+    } catch (err) {
+      console.error('Error sending message:', err);
+      toast.error('Failed to send message');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Start new conversation
+  const handleStartConversation = async (e) => {
+    e.preventDefault();
+    if (!composeForm.recipient.trim() || sending) return;
+
+    try {
+      setSending(true);
+      const conversation = await messageService.startConversation(
+        composeForm.recipient.trim(),
+        composeForm.message.trim()
+      );
+      
+      setConversations(prev => [conversation, ...prev]);
+      setComposeForm({ recipient: '', message: '' });
+      setShowCompose(false);
+      
+      // Select the new conversation
+      handleSelectConversation(conversation);
+      
+      toast.success('Conversation started!');
+    } catch (err) {
+      console.error('Error starting conversation:', err);
+      toast.error('Failed to start conversation');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Select conversation
+  const handleSelectConversation = (conversation) => {
+    setSelectedConversation(conversation);
+    loadMessages(conversation.Id);
+    
+    // Update URL without navigation
+    window.history.replaceState(null, '', `/messages/${conversation.Id}`);
+  };
+
+  // Search conversations
+  const filteredConversations = conversations.filter(conv => {
+    if (!searchQuery.trim()) return true;
+    const search = searchQuery.toLowerCase();
+    return conv.participants.some(p => 
+      p.username.toLowerCase().includes(search)
+    ) || conv.lastMessage?.content?.toLowerCase().includes(search);
+  });
+
+  useEffect(() => {
+    loadConversations();
+  }, []);
+
+  useEffect(() => {
+    if (conversationId && conversations.length > 0) {
+      const conv = conversations.find(c => c.Id === parseInt(conversationId));
+      if (conv) {
+        handleSelectConversation(conv);
+      }
+    }
+  }, [conversationId, conversations]);
+
+  if (loading) {
+    return <Loading message="Loading conversations..." />;
+  }
+
+  if (error) {
+    return (
+      <ErrorView 
+        title="Failed to Load Messages"
+        message={error}
+        onRetry={loadConversations}
+      />
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto">
+      <div className="flex h-[calc(100vh-120px)] bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* Conversations Sidebar */}
+        <div className="w-80 flex-shrink-0 border-r border-gray-200 flex flex-col">
+          {/* Header */}
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <ApperIcon name="MessageSquare" className="w-6 h-6 text-primary" />
+                Messages
+              </h1>
+              <Button
+                onClick={() => setShowCompose(true)}
+                variant="primary"
+                size="sm"
+                className="px-3 py-2"
+              >
+                <ApperIcon name="PenTool" className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            {/* Search */}
+            <div className="relative">
+              <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Search conversations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+
+          {/* Conversations List */}
+          <div className="flex-1 overflow-y-auto">
+            {filteredConversations.length === 0 ? (
+              <div className="p-8 text-center">
+                <ApperIcon name="MessageSquare" className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 font-medium">No conversations yet</p>
+                <p className="text-sm text-gray-400 mt-1">Start messaging to see conversations here</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {filteredConversations.map((conversation) => {
+                  const otherParticipant = conversation.participants.find(p => p.username !== 'john_doe');
+                  const isSelected = selectedConversation?.Id === conversation.Id;
+                  
+                  return (
+                    <div
+                      key={conversation.Id}
+                      onClick={() => handleSelectConversation(conversation)}
+                      className={cn(
+                        "p-4 hover:bg-gray-50 cursor-pointer transition-colors",
+                        isSelected && "bg-primary bg-opacity-10 border-r-2 border-primary"
+                      )}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
+                          {otherParticipant?.username.charAt(0).toUpperCase()}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className={cn(
+                              "font-medium truncate",
+                              isSelected ? "text-primary" : "text-gray-900"
+                            )}>
+                              {otherParticipant?.username}
+                            </span>
+                            {conversation.unreadCount > 0 && (
+                              <div className="min-w-[18px] h-[18px] bg-primary text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                {conversation.unreadCount > 9 ? '9+' : conversation.unreadCount}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {conversation.lastMessage && (
+                            <>
+                              <p className={cn(
+                                "text-sm truncate mt-1",
+                                conversation.unreadCount > 0 ? "text-gray-900 font-medium" : "text-gray-600"
+                              )}>
+                                {conversation.lastMessage.content}
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                {formatDistanceToNow(new Date(conversation.lastMessage.timestamp), { addSuffix: true })}
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Messages Area */}
+        <div className="flex-1 flex flex-col">
+          {!selectedConversation ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <ApperIcon name="MessageSquare" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
+                <p className="text-gray-500">Choose a conversation from the sidebar to start messaging</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Messages Header */}
+              <div className="p-4 border-b border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
+                    {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="font-medium text-gray-900">
+                      {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
+                    </h2>
+                    <p className="text-sm text-gray-500">Active now</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Messages List */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messagesLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
+                      Loading messages...
+                    </div>
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No messages yet. Start the conversation!</p>
+                  </div>
+                ) : (
+                  messages.map((message) => {
+                    const isOwn = message.senderId === 1;
+                    
+                    return (
+                      <div
+                        key={message.Id}
+                        className={cn(
+                          "flex gap-3 max-w-[70%]",
+                          isOwn ? "ml-auto flex-row-reverse" : ""
+                        )}
+                      >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          {isOwn ? 'J' : selectedConversation.participants.find(p => p.Id === message.senderId)?.username.charAt(0).toUpperCase()}
+                        </div>
+                        
+                        <div className={cn("flex flex-col gap-1", isOwn && "items-end")}>
+                          <div className={cn(
+                            "rounded-2xl px-4 py-2 max-w-full break-words",
+                            isOwn 
+                              ? "bg-primary text-white rounded-br-sm" 
+                              : "bg-gray-100 text-gray-900 rounded-bl-sm"
+                          )}>
+                            <p className="text-sm">{message.content}</p>
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Message Input */}
+              <div className="p-4 border-t border-gray-200">
+                <form onSubmit={handleSendMessage} className="flex gap-3">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Type a message..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      disabled={sending}
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={!newMessage.trim() || sending}
+                    variant="primary"
+                  >
+                    {sending ? (
+                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <ApperIcon name="Send" className="w-4 h-4" />
+                    )}
+                  </Button>
+                </form>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Compose Modal */}
+      {showCompose && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">New Message</h3>
+              <button
+                onClick={() => setShowCompose(false)}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleStartConversation} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  To:
+                </label>
+                <Input
+                  placeholder="Username"
+                  value={composeForm.recipient}
+                  onChange={(e) => setComposeForm(prev => ({ ...prev, recipient: e.target.value }))}
+                  disabled={sending}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Message:
+                </label>
+                <Textarea
+                  placeholder="Type your message..."
+                  value={composeForm.message}
+                  onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
+                  disabled={sending}
+                  rows={4}
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowCompose(false)}
+                  disabled={sending}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={!composeForm.recipient.trim() || sending}
+                  className="flex-1"
+                >
+                  {sending ? (
+                    <>
+                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin mr-2" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <ApperIcon name="Send" className="w-4 h-4 mr-2" />
+                      Send
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Messages;

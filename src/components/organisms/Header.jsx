@@ -7,7 +7,7 @@ import SearchBar from "@/components/molecules/SearchBar";
 import PostCreator from "@/components/organisms/PostCreator";
 import Button from "@/components/atoms/Button";
 import { notificationService } from "@/services/api/notificationService";
-
+import { messageService } from "@/services/api/messageService";
 // Notification Button Component
 const NotificationButton = () => {
   const navigate = useNavigate();
@@ -54,6 +54,58 @@ const NotificationButton = () => {
       />
       {unreadCount > 0 && (
         <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs font-semibold rounded-full flex items-center justify-center">
+          {unreadCount > 99 ? '99+' : unreadCount}
+        </div>
+      )}
+    </button>
+  );
+};
+
+const MessageButton = () => {
+  const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const loadUnreadCount = async () => {
+    try {
+      setLoading(true);
+      const count = await messageService.getUnreadCount();
+      setUnreadCount(count);
+    } catch (err) {
+      console.error('Error loading unread message count:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUnreadCount();
+    
+    // Poll for updates every 30 seconds
+    const interval = setInterval(loadUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleMessageClick = () => {
+    navigate('/messages');
+  };
+
+  return (
+    <button
+      onClick={handleMessageClick}
+      disabled={loading}
+      className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+      title="View messages"
+    >
+      <ApperIcon 
+        name={loading ? "Loader2" : "MessageSquare"} 
+        className={cn(
+          "w-5 h-5 text-gray-600",
+          loading && "animate-spin"
+        )} 
+      />
+      {unreadCount > 0 && (
+        <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-blue-500 text-white text-xs font-semibold rounded-full flex items-center justify-center">
           {unreadCount > 99 ? '99+' : unreadCount}
         </div>
       )}
@@ -110,9 +162,11 @@ const Header = ({ className }) => {
               <ApperIcon name="Search" className="w-5 h-5 text-gray-600" />
             </button>
 
+            {/* Messages */}
+            <MessageButton />
+
             {/* Notifications */}
             <NotificationButton />
-
             {/* Create Post */}
             <Button 
               onClick={handleCreatePost}

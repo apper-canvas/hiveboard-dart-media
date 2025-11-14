@@ -274,6 +274,18 @@ if (communityName) {
             </Link>
             
             <Link
+              to="/messages"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                <ApperIcon name="MessageSquare" className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-medium group-hover:text-primary transition-colors">
+                Messages
+              </span>
+            </Link>
+            
+            <Link
               to="/saved"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
             >
@@ -307,7 +319,7 @@ if (communityName) {
               <span className="font-medium group-hover:text-primary transition-colors">
                 Browse Communities
               </span>
-</Link>
+            </Link>
             
             <Link
               to="/preferences"
