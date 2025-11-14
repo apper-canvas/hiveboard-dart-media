@@ -4,6 +4,9 @@ import { communityService } from "@/services/api/communityService";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
+import Saved from "@/components/pages/Saved";
+import Hidden from "@/components/pages/Hidden";
+import Home from "@/components/pages/Home";
 import Community from "@/components/pages/Community";
 import TrendingWidget from "@/components/organisms/TrendingWidget";
 const Sidebar = ({ communityName = null, className }) => {
@@ -15,8 +18,8 @@ const Sidebar = ({ communityName = null, className }) => {
   const [communityStats, setCommunityStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
-  const loadPopularCommunities = async () => {
-try {
+const loadPopularCommunities = async () => {
+    try {
       const popularCommunities = await communityService.getPopular(10);
       setCommunities(popularCommunities);
     } catch (error) {
@@ -26,7 +29,7 @@ try {
     }
   };
 
-const loadCommunityData = async (name) => {
+  const loadCommunityData = async (name) => {
     try {
       setLoading(true);
       const [communityData, rules, mods, related, stats] = await Promise.all([
@@ -56,12 +59,13 @@ const loadCommunityData = async (name) => {
       loadPopularCommunities();
     }
   }, [communityName]);
+
   const formatMemberCount = (count) => {
     if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
+      return (count / 1000000).toFixed(1) + "M";
     }
     if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}k`;
+      return (count / 1000).toFixed(1) + "k";
     }
     return count.toString();
   };

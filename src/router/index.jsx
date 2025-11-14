@@ -1,15 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
-import Layout from "@/components/organisms/Layout";
 
+// Lazy load components
+const Layout = lazy(() => import("@/components/organisms/Layout"));
 const Home = lazy(() => import("@/components/pages/Home"));
 const PostDetail = lazy(() => import("@/components/pages/PostDetail"));
 const Community = lazy(() => import("@/components/pages/Community"));
 const CreateCommunity = lazy(() => import("@/components/pages/CreateCommunity"));
 const Saved = lazy(() => import("@/components/pages/Saved"));
 const Hidden = lazy(() => import("@/components/pages/Hidden"));
+const Analytics = lazy(() => import("@/components/pages/Analytics"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
-const LoadingFallback = () => (
+
+const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
     <div className="text-center space-y-4">
       <svg className="animate-spin h-12 w-12 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -25,23 +28,31 @@ const mainRoutes = [
     path: "",
     index: true,
     element: (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingSpinner />}>
         <Home />
       </Suspense>
     )
   },
   {
-    path: "post/:postId",
+    path: "post/:id",
     element: (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingSpinner />}>
         <PostDetail />
       </Suspense>
     )
-},
+  },
+  {
+    path: "analytics",
+    element: (
+      <Suspense fallback={<LoadingSpinner />}>
+        <Analytics />
+      </Suspense>
+    )
+  },
   {
     path: "r/:communityName",
     element: (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingSpinner />}>
         <Community />
       </Suspense>
     )
@@ -49,7 +60,7 @@ const mainRoutes = [
   {
     path: "create-community",
     element: (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingSpinner />}>
         <CreateCommunity />
       </Suspense>
     )
@@ -57,7 +68,7 @@ const mainRoutes = [
   {
     path: "*",
     element: (
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingSpinner />}>
         <NotFound />
       </Suspense>
     )
@@ -67,13 +78,17 @@ const mainRoutes = [
 const routes = [
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <Suspense fallback={<LoadingSpinner />}>
+        <Layout />
+      </Suspense>
+    ),
     children: [
       ...mainRoutes,
       {
         path: "saved",
         element: (
-          <Suspense fallback={<LoadingFallback />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <Saved />
           </Suspense>
         )
@@ -81,7 +96,7 @@ const routes = [
       {
         path: "hidden", 
         element: (
-          <Suspense fallback={<LoadingFallback />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <Hidden />
           </Suspense>
         )
