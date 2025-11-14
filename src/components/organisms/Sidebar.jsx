@@ -26,7 +26,7 @@ try {
     }
   };
 
-  const loadCommunityData = async (name) => {
+const loadCommunityData = async (name) => {
     try {
       setLoading(true);
       const [communityData, rules, mods, related, stats] = await Promise.all([

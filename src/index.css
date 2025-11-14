@@ -137,9 +137,68 @@ body {
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
   }
-
-  @keyframes shimmer {
+@keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
+  }
+
+  /* Community Theming System */
+  .community-card {
+    --community-primary: #6366F1;
+    --community-secondary: #8B5CF6;
+    --community-accent: #4F46E5;
+  }
+
+  .community-themed {
+    color: var(--community-primary);
+  }
+
+  .community-bg {
+    background-color: var(--community-primary);
+  }
+
+  .community-border {
+    border-color: var(--community-primary);
+  }
+
+  .community-gradient {
+    background: linear-gradient(135deg, var(--community-primary), var(--community-secondary));
+  }
+
+  /* Enhanced About Community Styles */
+  .moderator-badge {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .community-stat {
+    transition: all 0.2s ease-out;
+  }
+
+  .community-stat:hover {
+    transform: translateY(-1px);
+    background: #F8FAFC;
+  }
+
+  .rule-item {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .rule-item::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 10px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #6B7280;
   }
 }

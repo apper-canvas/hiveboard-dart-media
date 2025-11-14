@@ -12,11 +12,20 @@ export const communityService = {
 
   async getById(name) {
     await delay(200);
-    const community = communities.find(c => c.name.toLowerCase() === name.toLowerCase());
+const community = communities.find(c => c.name.toLowerCase() === name.toLowerCase());
     if (!community) {
       throw new Error("Community not found");
     }
-    return { ...community };
+    
+    // Add computed properties for enhanced display
+    const enrichedCommunity = {
+      ...community,
+      onlineUsers: Math.floor(community.memberCount * (0.02 + Math.random() * 0.08)), // 2-10% online
+      todayPosts: Math.floor(Math.random() * 50) + 5, // 5-55 posts today
+      weeklyGrowth: Math.round((Math.random() * 20 + 1) * 10) / 10 // 0.1-20.0% growth
+    };
+    
+    return enrichedCommunity;
   },
 
   async getPopular(limit = 10) {
@@ -96,13 +105,39 @@ export const communityService = {
     if (!community) {
       throw new Error("Community not found");
     }
-    
-    return {
+return {
       totalMembers: community.memberCount,
-      onlineUsers: Math.floor(community.memberCount * 0.03),
-      postsToday: Math.floor(Math.random() * 20) + 5,
-      weeklyGrowth: Math.round((Math.random() * 10 + 1) * 10) / 10
+      onlineUsers: Math.floor(community.memberCount * (0.02 + Math.random() * 0.08)),
+      postsToday: Math.floor(Math.random() * 50) + 5,
+      weeklyGrowth: Math.round((Math.random() * 20 + 1) * 10) / 10,
+      totalPosts: community.postCount,
+      avgDaily: Math.floor(community.postCount / ((Date.now() - community.createdAt) / (1000 * 60 * 60 * 24))),
+      topContributors: Math.floor(community.memberCount * 0.15)
     };
+  },
+
+  // Get community rules
+  getRules: async (name) => {
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
+    
+    const community = communities.find(c => c.name.toLowerCase() === name.toLowerCase());
+    if (!community) {
+      throw new Error("Community not found");
+    }
+    
+    return community.rules || [];
+  },
+
+  // Get community moderators
+  getModerators: async (name) => {
+    await new Promise(resolve => setTimeout(resolve, 200)); // Simulate API delay
+    
+    const community = communities.find(c => c.name.toLowerCase() === name.toLowerCase());
+    if (!community) {
+      throw new Error("Community not found");
+    }
+    
+    return community.moderators || [];
   },
 
   async search(query) {
