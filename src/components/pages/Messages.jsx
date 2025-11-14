@@ -410,8 +410,9 @@ const buildMessageThreads = (messages) => {
             )}
           </div>
         </div>
+</div>
 
-{/* Messages Area */}
+        {/* Messages Area */}
         <div className="flex-1 flex flex-col">
           {!selectedConversation ? (
             <div className="flex-1 flex items-center justify-center">
@@ -571,11 +572,11 @@ const buildMessageThreads = (messages) => {
                                 </div>
                               </div>
                             )}
-                          </div>
+</div>
                         </div>
-{/* Thread Replies */}
+                        {/* Thread Replies */}
                         {thread.replies && thread.replies.length > 0 && (
-                          <div className="ml-11 space-y-3 border-l-2 border-gray-200 pl-4">
+                          <div className="ml-8 space-y-3">
                             {thread.replies.map((reply) => (
                               <div key={reply.Id} className={cn(
                                 "flex gap-3 max-w-[80%] group",
@@ -610,9 +611,10 @@ const buildMessageThreads = (messages) => {
                             ))}
                           </div>
                         )}
-                      </div>
                     ))}
                   </div>
+                </div>
+
               {/* Message Input */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
                 <div className="flex gap-3">
@@ -636,34 +638,33 @@ const buildMessageThreads = (messages) => {
                     disabled={!newMessage.trim() || sending}
                     variant="primary"
                   >
-                    {sending ? (
-                      <ApperIcon name="Loader2" className="w-4 h-4 animate-spin" />
-                    ) : (
+) : (
                       <ApperIcon name="Send" className="w-4 h-4" />
                     )}
                   </Button>
                 </div>
-<div className="text-xs text-gray-500 mt-2">
-                <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
-              </div>
-            </form>
+                <div className="text-xs text-gray-500 mt-2">
+                  <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
+                </div>
+              </form>
             </>
           )}
         </div>
-
-        {/* Compose Modal */}
+{/* Compose Modal */}
         {showCompose && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">New Message</h3>
-              <button
-                onClick={() => setShowCompose(false)}
-                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">New Message</h3>
+                <button
+                  onClick={() => setShowCompose(false)}
+                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <ApperIcon name="X" className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
 
+              <form onSubmit={handleStartConversation} className="space-y-4">
             <form onSubmit={handleStartConversation} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -686,12 +687,12 @@ const buildMessageThreads = (messages) => {
                   placeholder="Type your message..."
                   value={composeForm.message}
                   onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
-                  disabled={sending}
-rows={4}
+disabled={sending}
+                  rows={4}
                 />
               </div>
-<div className="flex gap-3">
-                <Button
+
+              <div className="flex gap-3">
                   type="button"
                   variant="secondary"
                   disabled={sending}
@@ -716,42 +717,49 @@ rows={4}
                       <ApperIcon name="Send" className="w-4 h-4 mr-2" />
                       Send
                     </>
+</>
                   )}
                 </Button>
               </div>
             </form>
-          </div>
-        )}
-        )}
-
-        {/* Block User Confirmation Modal */}
-        {showBlockConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Block User</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to block <strong>{showBlockConfirm.username}</strong>? 
-              You won't receive messages from them and they won't appear in your conversation list.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setShowBlockConfirm(null)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => handleBlockUser(showBlockConfirm.Id)}
-              >
-Block User
-              </Button>
+</div>
+            </form>
             </div>
           </div>
         )}
 
-        {/* Report Spam Modal */}
+        {/* Block User Confirmation Modal */}
+        {/* Block User Confirmation Modal */}
+{showBlockConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Block User</h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to block <strong>{showBlockConfirm.username}</strong>? 
+                You won't receive messages from them and they won't appear in your conversation list.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowBlockConfirm(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => handleBlockUser(showBlockConfirm.Id)}
+                >
+                  Block User
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+{/* Report Spam Modal */}
         {showReportModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Report Message</h3>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Why are you reporting this message?
@@ -769,7 +777,8 @@ Block User
                   <option value="other">Other</option>
                 </select>
               </div>
-<div className="flex gap-3 justify-end">
+
+              <div className="flex gap-3 justify-end mt-6">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -790,8 +799,6 @@ Block User
             </div>
           </div>
         )}
-      </div>
-    </div>
       </div>
     </div>
   );
