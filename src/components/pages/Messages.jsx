@@ -420,9 +420,8 @@ const buildMessageThreads = (messages) => {
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
               </div>
             </div>
-          ) : (
+) : (
             <>
-<>
               {/* Messages Header */}
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
@@ -433,6 +432,7 @@ const buildMessageThreads = (messages) => {
                     <div>
                       <h2 className="font-medium text-gray-900">
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
+                      </h2>
                       <p className="text-sm text-gray-500">Active now</p>
                     </div>
                   </div>
@@ -649,10 +649,10 @@ onClick={() => handleSendReply(thread.Id)}
                 </div>
                 <div className="text-xs text-gray-500 mt-2">
                   <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
-                </div>
+</div>
               </form>
             </>
-)}
+          )}
         </div>
 
         {/* Compose Modal */}
