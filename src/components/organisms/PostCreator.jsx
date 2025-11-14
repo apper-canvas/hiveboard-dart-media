@@ -17,7 +17,7 @@ const PostCreator = ({ isOpen, onClose }) => {
   const [communities, setCommunities] = useState([]);
   const [errors, setErrors] = useState({});
 
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     title: '',
     content: '',
     communityName: '',
@@ -27,7 +27,8 @@ const PostCreator = ({ isOpen, onClose }) => {
     isOC: false,
     contentType: 'text',
     url: '',
-    pollOptions: ['', '']
+    pollOptions: ['', ''],
+    pollDuration: 1
   });
 
   useEffect(() => {
@@ -93,7 +94,7 @@ const PostCreator = ({ isOpen, onClose }) => {
     }));
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const newErrors = {};
 
     if (!formData.title.trim()) {
@@ -121,6 +122,9 @@ const PostCreator = ({ isOpen, onClose }) => {
       if (validOptions.length < 2) {
         newErrors.pollOptions = 'At least 2 poll options are required';
       }
+      if (!formData.pollDuration || formData.pollDuration < 1 || formData.pollDuration > 7) {
+        newErrors.pollDuration = 'Please select a poll duration (1-7 days)';
+      }
     }
 
     setErrors(newErrors);
@@ -140,7 +144,7 @@ const PostCreator = ({ isOpen, onClose }) => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    try {
+try {
       const postData = {
         title: formData.title.trim(),
         content: activeTab === 'text' ? formData.content.trim() : 
@@ -152,7 +156,9 @@ const PostCreator = ({ isOpen, onClose }) => {
         flair: formData.flair,
         isNSFW: formData.isNSFW,
         isSpoiler: formData.isSpoiler,
-        isOC: formData.isOC
+        isOC: formData.isOC,
+        pollDuration: activeTab === 'poll' ? formData.pollDuration : null,
+        pollOptions: activeTab === 'poll' ? formData.pollOptions.filter(opt => opt.trim()).map(opt => ({ option: opt, votes: 0, voters: [] })) : null
       };
 
       await postService.create(postData);
@@ -167,7 +173,7 @@ const PostCreator = ({ isOpen, onClose }) => {
     }
   };
 
-  const resetForm = () => {
+const resetForm = () => {
     setFormData({
       title: '',
       content: '',
@@ -178,7 +184,8 @@ const PostCreator = ({ isOpen, onClose }) => {
       isOC: false,
       contentType: 'text',
       url: '',
-      pollOptions: ['', '']
+      pollOptions: ['', ''],
+      pollDuration: 1
     });
     setActiveTab('text');
     setIsPreviewMode(false);
@@ -281,9 +288,25 @@ const PostCreator = ({ isOpen, onClose }) => {
           </div>
         );
 
-      case 'poll':
+case 'poll':
         return (
           <div className="space-y-4">
+            <FormField label="Poll Duration" error={errors.pollDuration}>
+              <Select
+                value={formData.pollDuration}
+                onChange={(e) => handleInputChange('pollDuration', parseInt(e.target.value))}
+              >
+                <option value="">Select duration</option>
+                <option value="1">1 day</option>
+                <option value="2">2 days</option>
+                <option value="3">3 days</option>
+                <option value="4">4 days</option>
+                <option value="5">5 days</option>
+                <option value="6">6 days</option>
+                <option value="7">7 days</option>
+              </Select>
+            </FormField>
+            
             <FormField label="Poll Options" error={errors.pollOptions}>
               {formData.pollOptions.map((option, index) => (
                 <div key={index} className="flex items-center space-x-2 mb-2">

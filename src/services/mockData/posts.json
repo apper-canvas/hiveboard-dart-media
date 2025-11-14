@@ -11,10 +11,14 @@
     "downvotes": 142,
     "commentCount": 389,
     "timestamp": 1703875200000,
-"userVote": null,
-    "gilded": true
+    "userVote": null,
+    "gilded": true,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
+{
     "Id": 2,
     "title": "Beautiful sunset from my hiking trip in the Rocky Mountains",
     "content": "Captured this amazing view after a 6-hour hike. The colors were absolutely incredible!",
@@ -26,11 +30,39 @@
     "downvotes": 23,
     "commentCount": 87,
     "timestamp": 1703788800000,
-"userVote": "up",
-    "gilded": false
+    "userVote": "up",
+    "gilded": false,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
+  },
+{
+    "Id": 3,
+    "title": "What's the best programming language to learn in 2024?",
+    "content": null,
+    "contentType": "poll",
+    "thumbnailUrl": null,
+    "authorUsername": "currentUser",
+    "communityName": "technology",
+    "upvotes": 234,
+    "downvotes": 12,
+    "commentCount": 45,
+    "timestamp": 1703702400000,
+    "userVote": null,
+    "gilded": false,
+    "pollDuration": 3,
+    "pollOptions": [
+      { "option": "Python", "votes": 42, "voters": [] },
+      { "option": "JavaScript", "votes": 38, "voters": [] },
+      { "option": "Go", "votes": 28, "voters": [] },
+      { "option": "Rust", "votes": 35, "voters": [] }
+    ],
+    "pollEndTime": 1704500000000,
+    "pollActive": true
   },
   {
-    "Id": 3,
+    "Id": 4,
     "title": "New study reveals surprising benefits of morning meditation",
     "content": "A 12-week study of 500 participants shows that just 10 minutes of morning meditation can improve focus, reduce anxiety, and boost overall well-being significantly more than evening practices.",
     "contentType": "link",
@@ -41,11 +73,15 @@
     "downvotes": 45,
     "commentCount": 156,
     "timestamp": 1703702400000,
-"userVote": null,
-    "gilded": false
+    "userVote": null,
+    "gilded": false,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
-    "Id": 4,
+{
+    "Id": 5,
     "title": "My homemade sourdough bread recipe that never fails",
     "content": "After 3 years of perfecting this recipe, I finally have a foolproof method for amazing sourdough. The secret is in the timing and temperature control.",
     "contentType": "text",
@@ -56,11 +92,15 @@
     "downvotes": 18,
     "commentCount": 234,
     "timestamp": 1703616000000,
-"userVote": null,
-    "gilded": true
+    "userVote": null,
+    "gilded": true,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
-    "Id": 5,
+{
+    "Id": 6,
     "title": "Climate change report shows alarming trends in ocean temperatures",
     "content": "The latest IPCC report reveals that ocean temperatures have risen faster than previously predicted, with significant implications for marine ecosystems and global weather patterns.",
     "contentType": "link",
@@ -71,11 +111,15 @@
     "downvotes": 234,
     "commentCount": 567,
     "timestamp": 1703529600000,
-"userVote": "down",
-    "gilded": false
+    "userVote": "down",
+    "gilded": false,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
-    "Id": 6,
+{
+    "Id": 7,
     "title": "Indie game developer creates stunning pixel art masterpiece",
     "content": "This solo developer spent 4 years creating one of the most beautiful pixel art games I've ever seen. The attention to detail is incredible.",
     "contentType": "image",
@@ -86,11 +130,15 @@
     "downvotes": 89,
     "commentCount": 445,
     "timestamp": 1703443200000,
-"userVote": null,
-    "gilded": true
+    "userVote": null,
+    "gilded": true,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
-    "Id": 7,
+{
+    "Id": 8,
     "title": "Space telescope discovers potentially habitable exoplanet",
     "content": "Scientists using the James Webb Space Telescope have identified a new exoplanet in the habitable zone of its star, with evidence suggesting the presence of water vapor in its atmosphere.",
     "contentType": "text",
@@ -101,11 +149,15 @@
     "downvotes": 156,
     "commentCount": 678,
     "timestamp": 1703356800000,
-"userVote": "up",
-    "gilded": false
+    "userVote": "up",
+    "gilded": false,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
-    "Id": 8,
+{
+    "Id": 9,
     "title": "Local community garden transforms abandoned lot",
     "content": "Our neighborhood came together to create something beautiful from an empty space. Here's how we did it and what we've learned along the way.",
     "contentType": "image",
@@ -116,11 +168,15 @@
     "downvotes": 12,
     "commentCount": 89,
     "timestamp": 1703270400000,
-"userVote": null,
-    "gilded": false
+    "userVote": null,
+    "gilded": false,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
-    "Id": 9,
+{
+    "Id": 10,
     "title": "New cryptocurrency regulation could reshape the market",
     "content": "The proposed regulations aim to provide clarity for investors while ensuring consumer protection. Industry experts are divided on the potential impact.",
     "contentType": "link",
@@ -131,11 +187,15 @@
     "downvotes": 567,
     "commentCount": 789,
     "timestamp": 1703184000000,
-"userVote": null,
-    "gilded": false
+    "userVote": null,
+    "gilded": false,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   },
-  {
-    "Id": 10,
+{
+    "Id": 11,
     "title": "Amazing time-lapse of aurora borealis from Iceland",
     "content": "Spent 12 hours in -15°C weather to capture this incredible display. The dancing lights were absolutely mesmerizing.",
     "contentType": "image",
@@ -146,7 +206,11 @@
     "downvotes": 34,
     "commentCount": 178,
     "timestamp": 1703097600000,
-"userVote": null,
-    "gilded": false
+    "userVote": null,
+    "gilded": false,
+    "pollDuration": null,
+    "pollOptions": null,
+    "pollEndTime": null,
+    "pollActive": false
   }
 ]

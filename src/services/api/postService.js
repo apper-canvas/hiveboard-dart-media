@@ -3,7 +3,7 @@ import postsData from "@/services/mockData/posts.json";
 let posts = [...postsData];
 let savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
 let hiddenPosts = JSON.parse(localStorage.getItem('hiddenPosts') || '[]');
-
+let pollVotes = JSON.parse(localStorage.getItem('pollVotes') || '{}');
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const postService = {
@@ -157,10 +157,18 @@ async create(postData) {
       isLiked: false,
       commentCount: 0,
       timestamp: Date.now(),
-      userVote: "up"
+      userVote: "up",
+      pollDuration: postData.pollDuration || null,
+      pollOptions: postData.pollOptions || null,
+      pollEndTime: postData.pollDuration ? Date.now() + (postData.pollDuration * 24 * 60 * 60 * 1000) : null,
+      pollActive: postData.pollDuration ? true : false
     };
     
     posts.unshift(newPost);
+    if (newPost.contentType === 'poll') {
+      pollVotes[newPost.Id] = { voters: [], votes: {} };
+      localStorage.setItem('pollVotes', JSON.stringify(pollVotes));
+    }
     return { ...newPost };
   },
 
@@ -197,6 +205,74 @@ async vote(id, voteType) {
     return { ...post };
   },
 
+  async votePoll(id, optionIndex) {
+    await delay(200);
+    const postIndex = posts.findIndex(p => p.Id === parseInt(id));
+    if (postIndex === -1) {
+      throw new Error("Post not found");
+    }
+
+    const post = { ...posts[postIndex] };
+    if (!post.pollActive) {
+      throw new Error("This poll has ended");
+    }
+
+    if (this.checkUserVoted(parseInt(id))) {
+      throw new Error("You've already voted in this poll");
+    }
+
+    if (!post.pollOptions || !post.pollOptions[optionIndex]) {
+      throw new Error("Invalid poll option");
+    }
+
+    post.pollOptions[optionIndex].votes = (post.pollOptions[optionIndex].votes || 0) + 1;
+    post.pollOptions[optionIndex].voters = post.pollOptions[optionIndex].voters || [];
+    post.pollOptions[optionIndex].voters.push('currentUser');
+
+    posts[postIndex] = post;
+    
+    pollVotes[parseInt(id)] = pollVotes[parseInt(id)] || { voters: [] };
+    pollVotes[parseInt(id)].voters.push('currentUser');
+    localStorage.setItem('pollVotes', JSON.stringify(pollVotes));
+
+    return { ...post };
+  },
+
+  checkUserVoted(postId) {
+    const voted = pollVotes[postId]?.voters || [];
+    return voted.includes('currentUser');
+  },
+
+  getTimeRemaining(pollEndTime) {
+    if (!pollEndTime) return '';
+    
+    const now = Date.now();
+    const remaining = pollEndTime - now;
+    
+    if (remaining <= 0) return 'Ended';
+    
+    const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
+    const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+    
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  },
+
+  async endPollEarly(id) {
+    await delay(200);
+    const postIndex = posts.findIndex(p => p.Id === parseInt(id));
+    if (postIndex === -1) {
+      throw new Error("Post not found");
+    }
+
+    const post = { ...posts[postIndex] };
+    post.pollActive = false;
+    posts[postIndex] = post;
+    return { ...post };
+  },
+
   async like(id) {
     await delay(200);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
@@ -219,7 +295,7 @@ async vote(id, voteType) {
     return { ...post };
   },
 
-  async update(id, data) {
+async update(id, data) {
     await delay(300);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
     if (postIndex === -1) {

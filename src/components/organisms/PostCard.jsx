@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
@@ -6,12 +6,32 @@ import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import VoteButtons from "@/components/molecules/VoteButtons";
-
 const PostCard = ({ post, className, onPostUpdate }) => {
 const [currentPost, setCurrentPost] = useState(post);
   const [isSaved, setIsSaved] = useState(postService.isPostSaved(post.Id));
   const [isHidden, setIsHidden] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [userVoted, setUserVoted] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentPost.contentType === 'poll' && currentPost.pollActive) {
+      const checkVoted = postService.checkUserVoted(currentPost.Id);
+      setUserVoted(checkVoted);
+      
+      const updateTime = () => {
+        const time = postService.getTimeRemaining(currentPost.pollEndTime);
+        setTimeRemaining(time);
+        if (time === 'Ended') {
+          setCurrentPost(prev => ({ ...prev, pollActive: false }));
+        }
+      };
+      updateTime();
+      const interval = setInterval(updateTime, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [currentPost.Id, currentPost.contentType, currentPost.pollActive]);
 
 const handleVote = async (voteType) => {
     try {
@@ -27,6 +47,33 @@ const handleVote = async (voteType) => {
       }
     } catch (error) {
       toast.error("Failed to vote. Please try again.");
+    }
+  };
+
+  const handlePollVote = async (optionIndex) => {
+    if (userVoted) {
+      toast.error("You've already voted in this poll");
+      return;
+    }
+    
+    try {
+      const updatedPost = await postService.votePoll(currentPost.Id, optionIndex);
+      setCurrentPost(updatedPost);
+      setUserVoted(true);
+      setShowResults(true);
+      toast.success("Vote recorded!");
+    } catch (error) {
+      toast.error(error.message || "Failed to vote. Please try again.");
+    }
+  };
+
+  const handleEndPollEarly = async () => {
+    try {
+      const updatedPost = await postService.endPollEarly(currentPost.Id);
+      setCurrentPost(updatedPost);
+      toast.success("Poll ended successfully");
+    } catch (error) {
+      toast.error("Failed to end poll. Please try again.");
     }
   };
 
@@ -83,15 +130,22 @@ toast.success("Post hidden from feed");
     navigate(`/post/${currentPost.Id}`);
   };
 
-  const getContentTypeIcon = () => {
+const getContentTypeIcon = () => {
     switch (currentPost.contentType) {
       case "image":
         return "Image";
       case "link":
         return "Link";
+      case "poll":
+        return "BarChart3";
       default:
         return "FileText";
     }
+  };
+
+  const getTotalVotes = () => {
+    if (!currentPost.pollOptions) return 0;
+    return currentPost.pollOptions.reduce((sum, opt) => sum + (opt.votes || 0), 0);
   };
 
   return (
@@ -159,39 +213,124 @@ toast.success("Post hidden from feed");
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <ApperIcon name="MessageSquare" className="w-4 h-4" />
-              <span>{currentPost.commentCount} comments</span>
+{currentPost.contentType === 'poll' ? (
+            <div className="space-y-4">
+              {/* Poll Time Remaining */}
+              {currentPost.pollActive && (
+                <div className="text-xs text-gray-500 flex items-center gap-1">
+                  <ApperIcon name="Clock" className="w-3 h-3" />
+                  <span>{timeRemaining} remaining</span>
+                </div>
+              )}
+
+              {/* Poll Status */}
+              {!currentPost.pollActive && (
+                <div className="text-xs text-gray-500 font-semibold">
+                  Poll ended
+                </div>
+              )}
+
+              {/* Show Results or Voting Interface */}
+              {showResults || !currentPost.pollActive ? (
+                <div className="space-y-2">
+                  {currentPost.pollOptions?.map((opt, idx) => {
+                    const totalVotes = getTotalVotes();
+                    const percentage = totalVotes === 0 ? 0 : Math.round((opt.votes / totalVotes) * 100);
+                    return (
+                      <div key={idx} className="space-y-1">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-gray-700">{opt.option}</span>
+                          <span className="text-gray-600">{percentage}% ({opt.votes})</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-1.5">
+                          <div
+                            className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {currentPost.pollOptions?.map((opt, idx) => (
+                    <button
+                      key={idx}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePollVote(idx);
+                      }}
+                      className="w-full p-2 border border-gray-300 rounded-lg hover:border-primary hover:bg-blue-50 transition-colors text-left text-sm"
+                      disabled={userVoted}
+                    >
+                      {opt.option}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Results Button for Non-Voters */}
+              {!showResults && currentPost.pollActive && !userVoted && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowResults(true);
+                  }}
+                  className="w-full p-2 text-primary text-sm font-medium hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  View Results
+                </button>
+              )}
+
+              {/* End Poll Early for Creator */}
+              {currentPost.pollActive && currentPost.authorUsername === 'currentUser' && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEndPollEarly();
+                  }}
+                  className="w-full p-2 text-xs text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  End Poll Early
+                </button>
+              )}
             </div>
-<button 
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 hover:text-primary transition-colors"
-            >
-              <ApperIcon name="Share" className="w-4 h-4" />
-              <span>Share</span>
-            </button>
-<button 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSave();
-              }}
-              className={`flex items-center gap-1 transition-colors ${isSaved ? 'text-primary' : 'hover:text-primary'}`}
-            >
-              <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
-              <span>{isSaved ? "Saved" : "Save"}</span>
-            </button>
-            <button 
-onClick={(e) => {
-                e.stopPropagation();
-                handleHide();
-              }}
-              className="flex items-center gap-1 hover:text-primary transition-colors"
-            >
-              <ApperIcon name="EyeOff" className="w-4 h-4" />
-              <span>Hide</span>
-            </button>
-          </div>
+          ) : (
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-1">
+                <ApperIcon name="MessageSquare" className="w-4 h-4" />
+                <span>{currentPost.commentCount} comments</span>
+              </div>
+              <button 
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 hover:text-primary transition-colors"
+              >
+                <ApperIcon name="Share" className="w-4 h-4" />
+                <span>Share</span>
+              </button>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSave();
+                }}
+                className={`flex items-center gap-1 transition-colors ${isSaved ? 'text-primary' : 'hover:text-primary'}`}
+              >
+                <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
+                <span>{isSaved ? "Saved" : "Save"}</span>
+              </button>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleHide();
+                }}
+                className="flex items-center gap-1 hover:text-primary transition-colors"
+              >
+                <ApperIcon name="EyeOff" className="w-4 h-4" />
+                <span>Hide</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Thumbnail */}
