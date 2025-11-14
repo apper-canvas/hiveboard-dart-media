@@ -21,11 +21,22 @@ const [loading, setLoading] = useState(true);
   const [isHidden, setIsHidden] = useState(false);
   const [postAwards, setPostAwards] = useState([]);
   const [showAwardModal, setShowAwardModal] = useState(false);
-  const loadPost = async () => {
+const loadPost = async () => {
     try {
       setLoading(true);
       setError("");
-      const postData = await postService.getById(postId);
+      const postIdInt = parseInt(postId, 10);
+      if (isNaN(postIdInt)) {
+        setError("Invalid post ID");
+        setLoading(false);
+        return;
+      }
+      const postData = await postService.getById(postIdInt);
+      if (!postData) {
+        setError("Post not found");
+        setLoading(false);
+        return;
+      }
       setPost(postData);
     } catch (err) {
       setError(err.message || "Failed to load post");
