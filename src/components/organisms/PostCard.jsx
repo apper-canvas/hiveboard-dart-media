@@ -4,11 +4,11 @@ import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
 import { awardService } from "@/services/api/awardService";
 import { toast } from "react-toastify";
-import AwardDisplay from "@/components/molecules/AwardDisplay";
-import AwardModal from "@/components/molecules/AwardModal";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
+import AwardDisplay from "@/components/molecules/AwardDisplay";
 import VoteButtons from "@/components/molecules/VoteButtons";
+import AwardModal from "@/components/molecules/AwardModal";
 const PostCard = ({ post, className, onPostUpdate }) => {
   const [currentPost, setCurrentPost] = useState(post);
   const [isSaved, setIsSaved] = useState(postService.isPostSaved(post.Id));
@@ -91,11 +91,11 @@ const handleVote = async (voteType) => {
       const updatedPost = await postService.like(currentPost.Id);
       setCurrentPost(updatedPost);
       
-      if (updatedPost.isLiked) {
+if (updatedPost.isLiked) {
         toast.success("Post liked!");
       } else {
         toast.success("Like removed");
-}
+      }
     } catch (error) {
       toast.error("Failed to like post. Please try again.");
     }
@@ -145,12 +145,12 @@ const handleHide = async () => {
       case "link":
         return "Link";
       case "poll":
+case "poll":
         return "BarChart3";
       default:
         return "FileText";
     }
-};
-
+  };
   const handleAwardGiven = (award) => {
     const updatedAwards = awardService.getPostAwards(currentPost.Id);
     setPostAwards(updatedAwards);
@@ -216,7 +216,7 @@ const handleHide = async () => {
             {currentPost.title}
           </h2>
 
-          {/* Content Preview */}
+{/* Content Preview */}
           {currentPost.content && (
             <p className="text-gray-700 mb-3 line-clamp-3">
               {currentPost.content.length > 200 
@@ -224,7 +224,6 @@ const handleHide = async () => {
                 : currentPost.content}
             </p>
           )}
-)}
 
         {/* Actions */}
         {currentPost.contentType === 'poll' ? (
@@ -354,8 +353,7 @@ const handleHide = async () => {
                 onClick={() => setShowAwardModal(true)}
                 className="flex items-center gap-2 hover:text-primary transition-colors group"
                 title="Give Award"
-              >
-                <ApperIcon name="Gift" className="w-4 h-4" />
+<ApperIcon name="Gift" className="w-4 h-4" />
                 <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
               </button>
             </div>
@@ -363,6 +361,7 @@ const handleHide = async () => {
         )}
       </div>
 
+      {/* Thumbnail */}
       {/* Thumbnail */}
       {currentPost.thumbnailUrl && (
         <div className="flex-shrink-0">
@@ -376,19 +375,17 @@ const handleHide = async () => {
           />
         </div>
       )}
+
+      {/* Award Modal */}
+      <AwardModal
+        isOpen={showAwardModal}
+        onClose={() => setShowAwardModal(false)}
+        onAwardGiven={handleAwardGiven}
+        contentType="post"
+        contentId={currentPost.Id}
+      />
     </div>
-
-    {/* Award Modal */}
-    <AwardModal
-      isOpen={showAwardModal}
-      onClose={() => setShowAwardModal(false)}
-      onAwardGiven={handleAwardGiven}
-      contentType="post"
-      contentId={currentPost.Id}
-    />
-  </>
+  );
 };
-
-export default PostCard;
 
 export default PostCard;

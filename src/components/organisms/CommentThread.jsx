@@ -3,11 +3,11 @@ import { formatDistanceToNow, isValid } from "date-fns";
 import { commentService } from "@/services/api/commentService";
 import { awardService } from "@/services/api/awardService";
 import { toast } from "react-toastify";
-import AwardDisplay from "@/components/molecules/AwardDisplay";
-import AwardModal from "@/components/molecules/AwardModal";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
+import AwardDisplay from "@/components/molecules/AwardDisplay";
 import VoteButtons from "@/components/molecules/VoteButtons";
+import AwardModal from "@/components/molecules/AwardModal";
 import CommentForm from "@/components/molecules/CommentForm";
 
 const CommentThread = ({ 
@@ -106,10 +106,10 @@ const handleReplyAdded = (newReply) => {
       depth === 0 ? "depth-0" : ""
     )}>
       <div className="bg-white rounded-lg p-4 border border-gray-100">
-        <div className="flex gap-3">
+<div className="flex gap-3">
           {/* Vote Buttons */}
           <div className="flex-shrink-0">
-<div className="flex gap-2">
+            <div className="flex gap-2">
               <VoteButtons 
                 upvotes={currentComment.upvotes}
                 downvotes={currentComment.downvotes}
@@ -129,13 +129,13 @@ const handleReplyAdded = (newReply) => {
 
           {/* Comment Content */}
           <div className="flex-1 min-w-0">
-            {/* Header */}
+{/* Header */}
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
               <span className="font-semibold text-gray-900">
                 u/{currentComment.authorUsername}
               </span>
               <span>•</span>
-<span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500">
                 {currentComment?.timestamp && isValid(new Date(currentComment.timestamp)) 
                   ? `${formatDistanceToNow(new Date(currentComment.timestamp))} ago`
                   : 'Date unavailable'}
@@ -153,13 +153,14 @@ const handleReplyAdded = (newReply) => {
                     />
                     {isCollapsed ? "Expand" : "Collapse"}
                   </button>
-156]                  )}
-157]                  {isCollapsed && totalReplyCount > 0 && (
-158]                    <span className="text-xs text-gray-500 ml-1">
-159]                      ({totalReplyCount} {totalReplyCount === 1 ? 'reply' : 'replies'})
-160]                    </span>
-161]                  )}
-162]              )}
+                  {isCollapsed && totalReplyCount > 0 && (
+                    <span className="text-xs text-gray-500 ml-1">
+                      ({totalReplyCount} {totalReplyCount === 1 ? 'reply' : 'replies'})
+                    </span>
+                  )}
+                </>
+              )}
+</div>
 
             {/* Awards Display */}
             {commentAwards.length > 0 && (
@@ -171,6 +172,9 @@ const handleReplyAdded = (newReply) => {
             {!isCollapsed && (
               <>
                 <div className="text-gray-900 mb-3">
+                  {currentComment.content}
+                </div>
+<div className="text-gray-900 mb-3">
                   {currentComment.content}
                 </div>
 
@@ -185,17 +189,17 @@ const handleReplyAdded = (newReply) => {
                       Reply
                     </button>
                   )}
-{/* Give Award Button */}
-            <button
-              onClick={() => setShowAwardModal(true)}
-              className="flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors hover:bg-gray-100 px-2 py-1 rounded group"
-              title="Give Award"
-            >
-              <ApperIcon name="Gift" size={14} />
-              <span className="opacity-0 group-hover:opacity-100">Award</span>
-            </button>
+                  {/* Give Award Button */}
+                  <button
+                    onClick={() => setShowAwardModal(true)}
+                    className="flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors hover:bg-gray-100 px-2 py-1 rounded group"
+                    title="Give Award"
+                  >
+                    <ApperIcon name="Gift" size={14} />
+                    <span className="opacity-0 group-hover:opacity-100">Award</span>
+                  </button>
 
-            <button
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSave();
@@ -205,15 +209,12 @@ const handleReplyAdded = (newReply) => {
                     <ApperIcon name={isSaved ? "BookmarkCheck" : "Bookmark"} className="w-4 h-4" />
                     {isSaved ? "Saved" : "Save"}
                   </button>
-<button 
+                  <button 
                     onClick={(e) => e.stopPropagation()}
                     className="flex items-center gap-1 text-sm text-gray-600 hover:text-primary font-medium"
                   >
                     <ApperIcon name="Share" className="w-4 h-4" />
                     Share
-                  </button>
-                </div>
-
                 {/* Reply Form */}
                 {showReplyForm && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
@@ -229,14 +230,14 @@ const handleReplyAdded = (newReply) => {
               </>
             )}
           </div>
-        </div>
+</div>
       </div>
 
       {/* Child Comments */}
       {!isCollapsed && currentComment.children && currentComment.children.length > 0 && (
         <div className="mt-3 space-y-3">
           {currentComment.children.map((childComment) => (
-<CommentThread
+            <CommentThread
               key={childComment.Id}
               comment={childComment}
               onCommentAdded={onCommentAdded}
@@ -244,21 +245,28 @@ const handleReplyAdded = (newReply) => {
               depth={depth + 1}
             />
           ))}
-248]        </div>
-249]      )}
+        </div>
+      )}
+)}
 
-        {/* Award Modal */}
-        <AwardModal
-          isOpen={showAwardModal}
-          onClose={() => setShowAwardModal(false)}
-          onAwardGiven={() => {
-            const awards = awardService.getCommentAwards(currentComment.Id);
-            setCommentAwards(awards);
-          }}
-262]          contentId={currentComment.Id}
-263]        />
-264]    );
-265]  };
-266]
+      {/* Award Modal */}
+      <AwardModal
+        isOpen={showAwardModal}
+        onClose={() => setShowAwardModal(false)}
+        onAwardGiven={() => {
+          const awards = awardService.getCommentAwards(currentComment.Id);
+          setCommentAwards(awards);
+        }}
+        contentId={currentComment.Id}
+      />
+    </div>
+  );
+};
+}}
+        contentId={currentComment.Id}
+      />
+    </div>
+  );
+};
 
 export default CommentThread;
