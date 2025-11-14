@@ -307,6 +307,18 @@ if (communityName) {
               <span className="font-medium group-hover:text-primary transition-colors">
                 Browse Communities
               </span>
+</Link>
+            
+            <Link
+              to="/preferences"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                <ApperIcon name="Settings" className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-medium group-hover:text-primary transition-colors">
+                Notification Preferences
+              </span>
             </Link>
           </div>
         </div>

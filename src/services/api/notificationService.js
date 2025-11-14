@@ -137,6 +137,84 @@ export const notificationService = {
       mod_invite: 'Mod Invite',
       message: 'Message'
     };
-    return displayMap[type] || 'Notification';
+return displayMap[type] || 'Notification';
+  },
+
+  // Notification preferences management
+  getPreferences: async () => {
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Return default preferences structure
+      return {
+        types: {
+          upvote_post: true,
+          upvote_comment: true,
+          reply: true,
+          mention: true,
+          new_follower: true,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        },
+        delivery: {
+          email: true,
+          push: true
+        },
+        frequency: 'instant' // instant, hourly, daily, weekly
+      };
+    } catch (error) {
+      throw new Error('Failed to load notification preferences');
+    }
+  },
+
+  updatePreferences: async (preferences) => {
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // In a real application, this would save to backend
+      // For now, we'll just validate the structure
+      if (!preferences.types || !preferences.delivery || !preferences.frequency) {
+        throw new Error('Invalid preferences structure');
+      }
+      
+      return preferences;
+    } catch (error) {
+      throw new Error('Failed to update notification preferences');
+    }
+  },
+
+  resetPreferences: async () => {
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      // Return default preferences
+      return {
+        types: {
+          upvote_post: true,
+          upvote_comment: true,
+          reply: true,
+          mention: true,
+          new_follower: true,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        },
+        delivery: {
+          email: true,
+          push: true
+        },
+        frequency: 'instant'
+      };
+    } catch (error) {
+      throw new Error('Failed to reset notification preferences');
+    }
   }
 };

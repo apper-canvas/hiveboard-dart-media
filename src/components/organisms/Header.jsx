@@ -182,6 +182,14 @@ to="/profile/current_user"
                       >
                         <ApperIcon name="Settings" className="w-4 h-4" />
                         Settings
+</Link>
+                      
+                      <Link
+                        to="/preferences"
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                      >
+                        <ApperIcon name="Settings" className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Preferences</span>
                       </Link>
                       <Link 
                         to="/create-community"
