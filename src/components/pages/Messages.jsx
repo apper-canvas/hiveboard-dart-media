@@ -411,7 +411,6 @@ const buildMessageThreads = (messages) => {
           </div>
         </div>
 
-        {/* Messages Area */}
 {/* Messages Area */}
         <div className="flex-1 flex flex-col">
           {!selectedConversation ? (
@@ -422,7 +421,6 @@ const buildMessageThreads = (messages) => {
               </div>
             </div>
           ) : (
-) : (
             <>
               {/* Messages Header */}
               <div className="p-4 border-b border-gray-200">
@@ -436,7 +434,6 @@ const buildMessageThreads = (messages) => {
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
                       </h2>
                       <p className="text-sm text-gray-500">Active now</p>
-<p className="text-sm text-gray-500">Active now</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -446,7 +443,7 @@ const buildMessageThreads = (messages) => {
                     >
                       <ApperIcon name="Mail" size={18} />
                     </Button>
-                    <div className="relative">
+<div className="relative">
                       <Button
                         variant="ghost"
                         onClick={() => setShowActionMenu(showActionMenu ? null : selectedConversation.Id)}
@@ -469,7 +466,7 @@ const buildMessageThreads = (messages) => {
                           </button>
                         </div>
                       )}
-</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -576,8 +573,7 @@ const buildMessageThreads = (messages) => {
                             )}
                           </div>
                         </div>
-                        
-                        {/* Thread Replies */}
+{/* Thread Replies */}
                         {thread.replies && thread.replies.length > 0 && (
                           <div className="ml-11 space-y-3 border-l-2 border-gray-200 pl-4">
                             {thread.replies.map((reply) => (
@@ -612,14 +608,11 @@ const buildMessageThreads = (messages) => {
                                 </div>
                               </div>
                             ))}
-</div>
+                          </div>
                         )}
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
-
               {/* Message Input */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
                 <div className="flex gap-3">
@@ -650,10 +643,10 @@ const buildMessageThreads = (messages) => {
                     )}
                   </Button>
                 </div>
-                <div className="text-xs text-gray-500 mt-2">
-                  <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
-</div>
-              </form>
+<div className="text-xs text-gray-500 mt-2">
+                <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
+              </div>
+            </form>
             </>
           )}
         </div>
@@ -694,15 +687,15 @@ const buildMessageThreads = (messages) => {
                   value={composeForm.message}
                   onChange={(e) => setComposeForm(prev => ({ ...prev, message: e.target.value }))}
                   disabled={sending}
-                  rows={4}
+rows={4}
                 />
-</div>
-
-              <div className="flex gap-3">
+              </div>
+<div className="flex gap-3">
                 <Button
                   type="button"
                   variant="secondary"
                   disabled={sending}
+                  onClick={() => setShowCompose(false)}
                   className="flex-1"
                 >
                   Cancel
@@ -725,9 +718,10 @@ const buildMessageThreads = (messages) => {
                     </>
                   )}
                 </Button>
-</div>
+              </div>
             </form>
           </div>
+        )}
         )}
 
         {/* Block User Confirmation Modal */}
@@ -749,11 +743,10 @@ const buildMessageThreads = (messages) => {
                 variant="danger"
                 onClick={() => handleBlockUser(showBlockConfirm.Id)}
               >
-                Block User
+Block User
               </Button>
-</div>
+            </div>
           </div>
-        </div>
         )}
 
         {/* Report Spam Modal */}
@@ -776,14 +769,15 @@ const buildMessageThreads = (messages) => {
                   <option value="other">Other</option>
                 </select>
               </div>
-              <div className="flex gap-3 justify-end">
+<div className="flex gap-3 justify-end">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setShowReportModal(null);
                     setReportReason('');
                   }}
-Cancel
+                >
+                  Cancel
                 </Button>
                 <Button
                   variant="danger"
@@ -796,6 +790,8 @@ Cancel
             </div>
           </div>
         )}
+      </div>
+    </div>
       </div>
     </div>
   );
