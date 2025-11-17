@@ -41,9 +41,9 @@ const PostCard = ({ post, className, onPostUpdate }) => {
       const awards = awardService.getPostAwards(post.Id);
       setPostAwards(awards);
       return () => clearInterval(interval);
-    }
-  }, [currentPost.Id, currentPost.contentType, currentPost.pollActive]);
-const handleVote = async (voteType) => {
+}, [currentPost.Id, currentPost.contentType, currentPost.pollActive]);
+
+  const handleVote = async (voteType) => {
     try {
       const updatedPost = await postService.vote(currentPost.Id, voteType);
       setCurrentPost(updatedPost);
@@ -59,7 +59,6 @@ const handleVote = async (voteType) => {
       toast.error("Failed to vote. Please try again.");
     }
   };
-  const handlePollVote = async (optionIndex) => {
     if (userVoted) {
       toast.error("You've already voted in this poll");
       return;
@@ -84,9 +83,9 @@ const handleVote = async (voteType) => {
     } catch (error) {
       toast.error("Failed to end poll. Please try again.");
     }
-  };
+};
 
-const handleLike = async () => {
+  const handleLike = async () => {
     try {
       const updatedPost = await postService.like(currentPost.Id);
       setCurrentPost(updatedPost);
@@ -100,8 +99,8 @@ const handleLike = async () => {
       toast.error("Failed to like post. Please try again.");
     }
   };
-const handleSave = async () => {
-    try {
+
+  const handleSave = async () => {
       if (isSaved) {
         await postService.unsavePost(currentPost.Id);
         setIsSaved(false);
@@ -113,7 +112,62 @@ const handleSave = async () => {
       }
     } catch (error) {
       toast.error("Failed to update save status");
+}
+  };
+
+  const handleHide = async () => {
+    try {
+      await postService.hidePost(currentPost.Id);
+      setIsHidden(true);
+      toast.success("Post hidden from feed");
+      if (onPostUpdate) {
+        onPostUpdate();
+      }
+    } catch (error) {
+      toast.error("Failed to hide post");
     }
+  };
+
+  const handlePostClick = (e) => {
+    if (e.target.closest(".vote-buttons") || e.target.closest(".community-link")) {
+      return;
+    }
+    navigate(`/post/${currentPost.Id}`);
+  };
+
+  useEffect(() => {
+    if (post) {
+      setCurrentPost(post);
+    }
+  }, [post]);
+
+  const getContentTypeIcon = () => {
+    if (!currentPost.contentType) return "FileText";
+    switch (currentPost.contentType) {
+      case "image":
+        return "Image";
+      case "video":
+        return "Video";
+      case "link":
+        return "Link";
+      case "poll":
+        return "BarChart3";
+      default:
+        return "FileText";
+    }
+  };
+
+  const handleAwardGiven = (award) => {
+    const updatedAwards = awardService.getPostAwards(currentPost.Id);
+    setPostAwards(updatedAwards);
+  };
+
+  const getTotalVotes = () => {
+    if (!currentPost.pollOptions) return 0;
+    return currentPost.pollOptions.reduce((sum, opt) => sum + (opt.votes || 0), 0);
+  };
+
+  return (
   };
 
   const handleHide = async () => {
@@ -165,16 +219,7 @@ const handleAwardGiven = (award) => {
   const getTotalVotes = () => {
     if (!currentPost.pollOptions) return 0;
     return currentPost.pollOptions.reduce((sum, opt) => sum + (opt.votes || 0), 0);
-  };
-
-  const handlePostClick = (e) => {
-    // Don't navigate if clicking on vote buttons or community links
-    if (e.target.closest(".vote-buttons") || e.target.closest(".community-link")) {
-      return;
-    }
-    navigate(`/post/${currentPost.Id}`);
-  };
-
+};
   useEffect(() => {
     if (post) {
       setCurrentPost(post);
@@ -186,8 +231,7 @@ const handleAwardGiven = (award) => {
       default:
         return "FileText";
     }
-return (
-    <div className={cn(
+<div className={cn(
       "bg-white rounded-xl shadow-sm border border-gray-100 card-hover cursor-pointer"
     )}>
       <div className="flex gap-4 p-4" onClick={handlePostClick}>
@@ -212,7 +256,6 @@ return (
           </div>
         </div>
 
-        {/* Content */}
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Metadata */}
@@ -239,7 +282,7 @@ return (
           {/* Title */}
           <h2 className="text-lg font-bold text-gray-900 mb-2 hover:text-primary transition-colors">
             {currentPost.title}
-</h2>
+          </h2>
 
           {/* Content Preview */}
           {currentPost.content && (
@@ -249,6 +292,8 @@ return (
                 : currentPost.content}
             </p>
           )}
+
+          {/* Actions */}
 {/* Actions */}
         {currentPost.contentType === 'poll' ? (
           <div className="space-y-4">
@@ -332,10 +377,10 @@ return (
                 End Poll Early
               </button>
             )}
-          </div>
+</div>
         ) : (
           <>
-{/* Awards Display */}
+            {/* Awards Display */}
             {postAwards.length > 0 && (
               <div className="flex items-center gap-2 py-2 flex-wrap">
                 <AwardDisplay awards={postAwards} />
@@ -382,11 +427,25 @@ return (
                 <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
               </button>
             </div>
-            </>
+          </>
         )}
       </div>
-      </div>
 
+      {/* Thumbnail */}
+      {currentPost.thumbnailUrl && (
+        <div className="flex-shrink-0">
+          <img 
+            src={currentPost.thumbnailUrl} 
+            alt={currentPost.title}
+            className="w-20 h-20 rounded-lg object-cover bg-gray-200"
+            onError={(e) => {
+              e.target.style.display = "none";
+            }}
+          />
+        </div>
+      )}
+
+      {/* Award Modal */}
       {/* Thumbnail */}
       {currentPost.thumbnailUrl && (
         <div className="flex-shrink-0">
