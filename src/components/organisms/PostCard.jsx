@@ -392,9 +392,8 @@ const getContentTypeIcon = () => {
         onAwardGiven={handleAwardGiven}
         contentType="post"
         contentId={currentPost.Id}
-      />
+/>
     </div>
-  );
   );
 };
 
