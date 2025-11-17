@@ -49,7 +49,7 @@ useEffect(() => {
     if (postId) {
       loadPost();
     }
-  }, [postId]);
+  }, [postId, loadPost]);
 
 useEffect(() => {
     // Check if post is saved or hidden after post is loaded
