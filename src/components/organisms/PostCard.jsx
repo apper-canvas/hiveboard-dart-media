@@ -22,7 +22,7 @@ const PostCard = ({ post, className, onPostUpdate }) => {
   const [showAwardModal, setShowAwardModal] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+useEffect(() => {
     if (currentPost.contentType === 'poll' && currentPost.pollActive) {
       const checkVoted = postService.checkUserVoted(currentPost.Id);
       setUserVoted(checkVoted);
@@ -32,12 +32,13 @@ const PostCard = ({ post, className, onPostUpdate }) => {
         setTimeRemaining(time);
         if (time === 'Ended') {
           setCurrentPost(prev => ({ ...prev, pollActive: false }));
-};
+        }
+      };
       updateTime();
       const interval = setInterval(updateTime, 60000);
       
       // Load awards for this post
-      const awards = awardService.getPostAwards(post.Id);
+      const awards = awardService.getPostAwards(currentPost.Id);
       setPostAwards(awards);
       return () => clearInterval(interval);
     }
@@ -87,7 +88,7 @@ const PostCard = ({ post, className, onPostUpdate }) => {
     }
   };
 
-  const handleLike = async () => {
+const handleLike = async () => {
     try {
       const updatedPost = await postService.like(currentPost.Id);
       setCurrentPost(updatedPost);
@@ -95,13 +96,17 @@ const PostCard = ({ post, className, onPostUpdate }) => {
       if (updatedPost.isLiked) {
         toast.success("Post liked!");
       } else {
-} else {
         toast.success("Like removed");
       }
     } catch (error) {
       toast.error("Failed to like post. Please try again.");
     }
   };
+
+  const handleSave = async () => {
+    try {
+      if (isSaved) {
+        await postService.unsavePost(currentPost.Id);
         setIsSaved(false);
         toast.success("Post removed from saved");
       } else {
@@ -140,7 +145,7 @@ const PostCard = ({ post, className, onPostUpdate }) => {
     }
   }, [post]);
 
-  const getContentTypeIcon = () => {
+const getContentTypeIcon = () => {
     if (!currentPost.contentType) return "FileText";
     switch (currentPost.contentType) {
       case "image":
@@ -148,7 +153,6 @@ const PostCard = ({ post, className, onPostUpdate }) => {
       case "video":
         return "Video";
       case "link":
-case "link":
         return "Link";
       case "poll":
         return "BarChart3";
@@ -156,6 +160,9 @@ case "link":
         return "FileText";
     }
   };
+
+  const handleAwardGiven = (award) => {
+    const updatedAwards = [...postAwards, award];
     setPostAwards(updatedAwards);
   };
 
@@ -378,8 +385,7 @@ case "link":
           </div>
         )}
       </div>
-
-      {/* Award Modal */}
+{/* Award Modal */}
       <AwardModal
         isOpen={showAwardModal}
         onClose={() => setShowAwardModal(false)}
@@ -387,11 +393,9 @@ case "link":
         contentType="post"
         contentId={currentPost.Id}
       />
-/>
     </div>
   );
+  );
 };
-
-export default PostCard;
 
 export default PostCard;
