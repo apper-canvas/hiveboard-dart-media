@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
 import { awardService } from "@/services/api/awardService";
+import { savedService } from "@/services/api/savedService";
+import { hiddenService } from "@/services/api/hiddenService";
 import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
@@ -98,7 +100,7 @@ const handleLike = async () => {
       toast.error("Failed to like post. Please try again.");
     }
   };
-  const handleSave = async () => {
+const handleSave = async () => {
     try {
       if (isSaved) {
         await postService.unsavePost(currentPost.Id);
@@ -113,12 +115,12 @@ const handleLike = async () => {
       toast.error("Failed to update save status");
     }
   };
-const handleHide = async () => {
+
+  const handleHide = async () => {
     try {
       await postService.hidePost(currentPost.Id);
       setIsHidden(true);
       toast.success("Post hidden from feed");
-      // Trigger parent to refresh feed if needed
       if (onPostUpdate) {
         onPostUpdate();
       }
@@ -126,17 +128,27 @@ const handleHide = async () => {
       toast.error("Failed to hide post");
     }
   };
+
   const handlePostClick = (e) => {
-    // Don't navigate if clicking on vote buttons or community links
     if (e.target.closest(".vote-buttons") || e.target.closest(".community-link")) {
       return;
     }
     navigate(`/post/${currentPost.Id}`);
   };
-const getContentTypeIcon = () => {
+
+  useEffect(() => {
+    if (post) {
+      setCurrentPost(post);
+    }
+  }, [post]);
+
+  const getContentTypeIcon = () => {
+    if (!currentPost.contentType) return "FileText";
     switch (currentPost.contentType) {
       case "image":
         return "Image";
+      case "video":
+        return "Video";
       case "link":
         return "Link";
       case "poll":
@@ -145,8 +157,7 @@ const getContentTypeIcon = () => {
         return "FileText";
     }
   };
-
-  const handleAwardGiven = (award) => {
+const handleAwardGiven = (award) => {
     const updatedAwards = awardService.getPostAwards(currentPost.Id);
     setPostAwards(updatedAwards);
   };
@@ -156,6 +167,25 @@ const getContentTypeIcon = () => {
     return currentPost.pollOptions.reduce((sum, opt) => sum + (opt.votes || 0), 0);
   };
 
+  const handlePostClick = (e) => {
+    // Don't navigate if clicking on vote buttons or community links
+    if (e.target.closest(".vote-buttons") || e.target.closest(".community-link")) {
+      return;
+    }
+    navigate(`/post/${currentPost.Id}`);
+  };
+
+  useEffect(() => {
+    if (post) {
+      setCurrentPost(post);
+    }
+  }, [post]);
+        return "Link";
+      case "poll":
+        return "BarChart3";
+      default:
+        return "FileText";
+    }
 return (
     <div className={cn(
       "bg-white rounded-xl shadow-sm border border-gray-100 card-hover cursor-pointer"
@@ -219,7 +249,7 @@ return (
                 : currentPost.content}
             </p>
           )}
-        {/* Actions */}
+{/* Actions */}
         {currentPost.contentType === 'poll' ? (
           <div className="space-y-4">
             {/* Poll Time Remaining */}
